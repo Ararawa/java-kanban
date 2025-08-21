@@ -34,7 +34,6 @@ public class TaskManager {
         }
     }
 
-    //Получение списка всех задач.
     public static void printAllTasks() {
         for (int i : tasks.keySet()) {
             System.out.println(tasks.get(i).toString());
@@ -49,14 +48,12 @@ public class TaskManager {
         }
     }
 
-    //Удаление всех задач.
     public static void deleteAllTasks() {
         tasks.clear();
         epics.clear();
         subtasks.clear();
     }
 
-    //Получение по идентификатору.
     public static void getByID(int numberID) {
         for (int i : tasks.keySet()) {
             if (i == numberID) {
@@ -75,7 +72,6 @@ public class TaskManager {
         }
     }
 
-    //Создание. Сам объект должен передаваться в качестве параметра.
     static void create(Object object) {
         if (object.getClass() == Task.class) {
             Task obj = (Task) object;
@@ -96,7 +92,6 @@ public class TaskManager {
         }
     }
 
-    //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     static void update(Object object) {
         if (object.getClass() == Task.class) {
             Task obj = (Task) object;
@@ -119,7 +114,6 @@ public class TaskManager {
         }
     }
 
-    //Удаление по идентификатору.
     public static void deleteByID(int numberID) {
         if (tasks.containsKey(numberID)) {
             tasks.remove(numberID);
@@ -133,7 +127,6 @@ public class TaskManager {
         }
     }
 
-    //Получение списка всех подзадач определённого эпика.
     public static void getSubtasksByEpicID(int numberID) {
         for (int i : epics.keySet()) {
             if (i == numberID) {
