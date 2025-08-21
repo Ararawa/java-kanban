@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
@@ -34,18 +35,20 @@ public class TaskManager {
         }
     }
 
-    public static void printAllTasks() {
+    public static ArrayList<Object> returnAllTasks() {
+        ArrayList<Object> allTasks = new ArrayList<>();
         for (int i : tasks.keySet()) {
-            System.out.println(tasks.get(i).toString());
+            allTasks.add(tasks.get(i));
         }
         for (int i : epics.keySet()) {
-            System.out.println(epics.get(i).toString());
+            allTasks.add(epics.get(i));
             for (int j : subtasks.keySet()) {
                 if (subtasks.get(j).epicID == epics.get(i).getNumberID()) {
-                    System.out.println(subtasks.get(j).toString());
+                    allTasks.add(subtasks.get(j));
                 }
             }
         }
+        return allTasks;
     }
 
     public static void deleteAllTasks() {
@@ -54,22 +57,11 @@ public class TaskManager {
         subtasks.clear();
     }
 
-    public static void getByID(int numberID) {
-        for (int i : tasks.keySet()) {
-            if (i == numberID) {
-                System.out.println(tasks.get(i).toString());
-            }
-        }
-        for (int i : epics.keySet()) {
-            if (i == numberID) {
-            System.out.println(epics.get(i).toString());
-                for (int j : subtasks.keySet()) {
-                    if (subtasks.get(j).epicID == epics.get(i).getNumberID()) {
-                        System.out.println(subtasks.get(j).toString());
-                    }
-                }
-            }
-        }
+    public static Object getByID(int numberID) {
+        if (tasks.containsKey(numberID)) return tasks.get(numberID);
+        if (epics.containsKey(numberID)) return epics.get(numberID);
+        if (subtasks.containsKey(numberID)) return subtasks.get(numberID);
+        return null;
     }
 
     static void create(Object object) {
@@ -127,16 +119,17 @@ public class TaskManager {
         }
     }
 
-    public static void getSubtasksByEpicID(int numberID) {
+    public static ArrayList<Object> getSubtasksByEpicID(int numberID) {
+        ArrayList<Object> allTasks = new ArrayList<>();
         for (int i : epics.keySet()) {
             if (i == numberID) {
-                System.out.println(epics.get(i).toString());
                 for (int j : subtasks.keySet()) {
                     if (subtasks.get(j).epicID == epics.get(i).getNumberID()) {
-                        System.out.println(subtasks.get(j).toString());
+                        allTasks.add(subtasks.get(j).toString());
                     }
                 }
             }
         }
+        return allTasks;
     }
 }

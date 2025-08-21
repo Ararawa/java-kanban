@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -17,20 +19,29 @@ public class Main {
         Subtask subtask3 = new Subtask("name7", TaskManager.generateNumber(), "description1", TaskStatus.NEW, epic2.getNumberID());
         TaskManager.create(subtask3);
         System.out.println("---");
-        TaskManager.printAllTasks();
+        ArrayList<Object> arrayList = TaskManager.returnAllTasks();
+        for (int i = 0; i < arrayList.size(); i++) {
+            System.out.println(arrayList.get(i).toString());
+        }
         System.out.println("---");
-        TaskManager.getByID(5);
+        System.out.println(TaskManager.getByID(5));
         System.out.println("---");
         Subtask subtask4 = new Subtask("n7", subtask2.numberID, "destion1", TaskStatus.DONE, epic2.getNumberID());
         TaskManager.update(subtask4);
-        TaskManager.getByID(5);
+        System.out.println(TaskManager.getByID(5));
         TaskManager.deleteByID(5);
         System.out.println("---");
-        TaskManager.printAllTasks();
+        ArrayList<Object> arrayList2 = TaskManager.returnAllTasks();
+        for (int i = 0; i < arrayList2.size(); i++) {
+            System.out.println(arrayList2.get(i).toString());
+        }
         System.out.println("---");
-        TaskManager.getSubtasksByEpicID(3);
+        System.out.println(TaskManager.getSubtasksByEpicID(3));
         TaskManager.deleteAllTasks();
-        TaskManager.printAllTasks();
+        ArrayList<Object> arrayList3 = TaskManager.returnAllTasks();
+        for (int i = 0; i < arrayList3.size(); i++) {
+            System.out.println(arrayList3.get(i).toString());
+        }
         System.out.println("---");
     }
 }
