@@ -57,7 +57,7 @@ public class TaskManager {
         subtasks.clear();
     }
 
-    public static Object getByID(int numberID) {
+    public static Task getByID(int numberID) {
         if (tasks.containsKey(numberID)) return tasks.get(numberID);
         if (epics.containsKey(numberID)) return epics.get(numberID);
         if (subtasks.containsKey(numberID)) return subtasks.get(numberID);
@@ -119,13 +119,13 @@ public class TaskManager {
         }
     }
 
-    public static ArrayList<Object> getSubtasksByEpicID(int numberID) {
-        ArrayList<Object> allTasks = new ArrayList<>();
+    public static ArrayList<Subtask> getSubtasksByEpicID(int numberID) {
+        ArrayList<Subtask> allTasks = new ArrayList<>();
         for (int i : epics.keySet()) {
             if (i == numberID) {
                 for (int j : subtasks.keySet()) {
                     if (subtasks.get(j).epicID == epics.get(i).getNumberID()) {
-                        allTasks.add(subtasks.get(j).toString());
+                        allTasks.add(subtasks.get(j));
                     }
                 }
             }
