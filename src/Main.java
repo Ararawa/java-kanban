@@ -10,6 +10,7 @@ public class Main {
         TaskManager.create(task2);
         Epic epic1 = new Epic("name3", TaskManager.generateNumber(), "description1", TaskStatus.NEW);
         TaskManager.create(epic1);
+        System.out.println(TaskManager.getByID(3));
         Subtask subtask1 = new Subtask("name4", TaskManager.generateNumber(), "description1", TaskStatus.DONE, epic1.getNumberID());
         TaskManager.create(subtask1);
         Epic epic2 = new Epic("name5", TaskManager.generateNumber(), "description1", TaskStatus.NEW);

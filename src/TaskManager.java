@@ -14,6 +14,7 @@ public class TaskManager {
     public static HashMap<Integer, Epic> epics = new HashMap<>();
 
     public static TaskStatus calculateStatus(Epic epic) {
+        if (epic.epicSubtasks.isEmpty()) return TaskStatus.NEW;
         int inProgress = 0;
         int done = 0;
         int news = 0;
