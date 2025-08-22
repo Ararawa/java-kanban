@@ -35,8 +35,8 @@ public class TaskManager {
         }
     }
 
-    public static ArrayList<Object> returnAllTasks() {
-        ArrayList<Object> allTasks = new ArrayList<>();
+    public static ArrayList<Task> returnAllTasks() {
+        ArrayList<Task> allTasks = new ArrayList<>();
         for (int i : tasks.keySet()) {
             allTasks.add(tasks.get(i));
         }
@@ -64,7 +64,7 @@ public class TaskManager {
         return null;
     }
 
-    static void create(Object object) {
+    static void create(Task object) {
         if (object.getClass() == Task.class) {
             Task obj = (Task) object;
             Task task = new Task(obj.name, obj.numberID, obj.description, obj.status);
@@ -84,7 +84,7 @@ public class TaskManager {
         }
     }
 
-    static void update(Object object) {
+    static void update(Task object) {
         if (object.getClass() == Task.class) {
             Task obj = (Task) object;
             tasks.get(obj.numberID).description = obj.description;
