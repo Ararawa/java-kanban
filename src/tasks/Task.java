@@ -1,15 +1,19 @@
+package tasks;
+
+import support.TaskStatus;
+
 import java.util.Objects;
 
 public class Task {
-    String name;
+    public String name;
 
     public int getNumberID() {
         return numberID;
     }
 
-    final int numberID;
-    String description;
-    TaskStatus status;
+    public final int numberID;
+    public String description;
+    public TaskStatus status;
 
     public Task(String name, int numberID, String description, TaskStatus status) {
         this.name = name;
@@ -34,7 +38,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "tasks.Task{" +
                 "name='" + name + '\'' +
                 ", numberID=" + numberID +
                 ", description='" + description + '\'' +

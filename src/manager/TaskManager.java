@@ -1,3 +1,8 @@
+package manager;
+
+import support.TaskStatus;
+import tasks.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,7 +69,7 @@ public class TaskManager {
         return null;
     }
 
-    static void create(Task object) {
+    public static void create(Task object) {
         if (object.getClass() == Task.class) {
             Task obj = (Task) object;
             Task task = new Task(obj.name, obj.numberID, obj.description, obj.status);
@@ -84,7 +89,7 @@ public class TaskManager {
         }
     }
 
-    static void update(Task object) {
+    public static void update(Task object) {
         if (object.getClass() == Task.class) {
             Task obj = (Task) object;
             tasks.get(obj.numberID).description = obj.description;
