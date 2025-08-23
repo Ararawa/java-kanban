@@ -69,45 +69,39 @@ public class TaskManager {
         return null;
     }
 
-    public static void create(Task object) {
-        if (object.getClass() == Task.class) {
-            Task obj = (Task) object;
-            Task task = new Task(obj.name, obj.numberID, obj.description, obj.status);
-            tasks.put(task.numberID, task);
-        } else if (object.getClass() == Epic.class) {
-            Epic obj = (Epic) object;
-            Epic epic = new Epic(obj.name, obj.numberID, obj.description, obj.status);
-            epic.epicSubtasks = obj.epicSubtasks;
+    public static void create(Task task) {
+        if (task instanceof Epic) {
+            Epic epic = new Epic(task.name, task.numberID, task.description, task.status);
+            epic.epicSubtasks = ((Epic) task).epicSubtasks;
             epic.status = calculateStatus(epic);
             epics.put(epic.numberID, epic);
-        } else if (object.getClass() == Subtask.class) {
-            Subtask obj = (Subtask) object;
-            Subtask subtask = new Subtask(obj.name, obj.numberID, obj.description, obj.status, obj.epicID);
+        } else if (task instanceof Subtask) {
+            Subtask subtask = new Subtask(task.name, task.numberID, task.description, task.status,
+                    ((Subtask) task).epicID);
             subtasks.put(subtask.numberID, subtask);
             epics.get(subtask.epicID).epicSubtasks.add(subtask.numberID);
             epics.get(subtask.epicID).status = calculateStatus(epics.get(subtask.epicID));
+        } else if (task != null) {
+            tasks.put(task.numberID, new Task(task.name, task.numberID, task.description, task.status));
         }
     }
 
-    public static void update(Task object) {
-        if (object.getClass() == Task.class) {
-            Task obj = (Task) object;
-            tasks.get(obj.numberID).description = obj.description;
-            tasks.get(obj.numberID).status = obj.status;
-            tasks.get(obj.numberID).name = obj.name;
-        } else if (object.getClass() == Epic.class) {
-            Epic obj = (Epic) object;
-            epics.get(obj.numberID).description = obj.description;
-            epics.get(obj.numberID).name = obj.name;
-            epics.get(obj.numberID).epicSubtasks = obj.epicSubtasks;
-            epics.get(obj.numberID).status = calculateStatus(epics.get(obj.numberID));
-        } else if (object.getClass() == Subtask.class) {
-            Subtask obj = (Subtask) object;
-            subtasks.get(obj.numberID).description = obj.description;
-            subtasks.get(obj.numberID).status = obj.status;
-            subtasks.get(obj.numberID).name = obj.name;
-            subtasks.get(obj.numberID).epicID = obj.epicID;
-            epics.get(obj.epicID).status = calculateStatus(epics.get(obj.epicID));
+    public static void update(Task task) {
+        if (task instanceof Epic) {
+            epics.get(task.numberID).description = task.description;
+            epics.get(task.numberID).name = task.name;
+            epics.get(task.numberID).epicSubtasks = ((Epic) task).epicSubtasks;
+            epics.get(task.numberID).status = calculateStatus(epics.get(task.numberID));
+        } else if (task instanceof Subtask) {
+            subtasks.get(task.numberID).description = task.description;
+            subtasks.get(task.numberID).status = task.status;
+            subtasks.get(task.numberID).name = task.name;
+            subtasks.get(task.numberID).epicID = ((Subtask) task).epicID;
+            epics.get(((Subtask) task).epicID).status = calculateStatus(epics.get(((Subtask) task).epicID));
+        } else if (task != null) {
+            tasks.get(task.numberID).description = task.description;
+            tasks.get(task.numberID).status = task.status;
+            tasks.get(task.numberID).name = task.name;
         }
     }
 
