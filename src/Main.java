@@ -17,13 +17,13 @@ public class Main {
         Epic epic1 = new Epic("name3", TaskManager.generateNumber(), "description1", TaskStatus.NEW);
         TaskManager.create(epic1);
         System.out.println(TaskManager.getByID(3));
-        Subtask subtask1 = new Subtask("name4", TaskManager.generateNumber(), "description1", TaskStatus.DONE, epic1.getNumberID());
+        Subtask subtask1 = new Subtask("name4", TaskManager.generateNumber(), "description1", TaskStatus.DONE, epic1.getID());
         TaskManager.create(subtask1);
         Epic epic2 = new Epic("name5", TaskManager.generateNumber(), "description1", TaskStatus.NEW);
         TaskManager.create(epic2);
-        Subtask subtask2 = new Subtask("name6", TaskManager.generateNumber(), "description1", TaskStatus.IN_PROGRESS, epic2.getNumberID());
+        Subtask subtask2 = new Subtask("name6", TaskManager.generateNumber(), "description1", TaskStatus.IN_PROGRESS, epic2.getID());
         TaskManager.create(subtask2);
-        Subtask subtask3 = new Subtask("name7", TaskManager.generateNumber(), "description1", TaskStatus.NEW, epic2.getNumberID());
+        Subtask subtask3 = new Subtask("name7", TaskManager.generateNumber(), "description1", TaskStatus.NEW, epic2.getID());
         TaskManager.create(subtask3);
         System.out.println("---");
         ArrayList<Task> arrayList = TaskManager.returnAllTasks();
@@ -33,7 +33,7 @@ public class Main {
         System.out.println("---");
         System.out.println(TaskManager.getByID(5));
         System.out.println("---");
-        Subtask subtask4 = new Subtask("n7", subtask2.numberID, "destion1", TaskStatus.DONE, epic2.getNumberID());
+        Subtask subtask4 = new Subtask("n7", subtask2.id, "destion1", TaskStatus.DONE, epic2.getID());
         TaskManager.update(subtask4);
         System.out.println(TaskManager.getByID(5));
         TaskManager.deleteByID(5);
