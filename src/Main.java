@@ -1,5 +1,5 @@
 import manager.TaskManager;
-import support.TaskStatus;
+import tasks.TaskStatus;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;

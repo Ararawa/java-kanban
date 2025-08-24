@@ -1,6 +1,6 @@
 package manager;
 
-import support.TaskStatus;
+import tasks.TaskStatus;
 import tasks.*;
 
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ public class TaskManager {
 
     public static int number = 0;
 
-    public static int generateNumber() {
-        return ++number;
-    }
-
     public static HashMap<Integer, Task> tasks = new HashMap<>();
     public static HashMap<Integer, Subtask> subtasks = new HashMap<>();
     public static HashMap<Integer, Epic> epics = new HashMap<>();
+
+    public static int generateNumber() {
+        return ++number;
+    }
 
     public static TaskStatus calculateStatus(Epic epic) {
         int inProgress = 0;

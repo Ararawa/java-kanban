@@ -1,7 +1,5 @@
 package tasks;
 
-import support.TaskStatus;
-
 import java.util.Objects;
 
 public class Task {
