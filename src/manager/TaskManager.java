@@ -1,6 +1,5 @@
 package manager;
 
-import tasks.TaskStatus;
 import tasks.*;
 
 import java.util.ArrayList;
