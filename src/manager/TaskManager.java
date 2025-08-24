@@ -63,9 +63,13 @@ public class TaskManager {
     }
 
     public static Task getByID(int id) {
-        if (tasks.containsKey(id)) return tasks.get(id);
-        if (epics.containsKey(id)) return epics.get(id);
-        if (subtasks.containsKey(id)) return subtasks.get(id);
+        if (tasks.containsKey(id)) {
+            return tasks.get(id);
+        } else if (epics.containsKey(id)) {
+            return epics.get(id);
+        } else if (subtasks.containsKey(id)) {
+            return subtasks.get(id);
+        }
         return null;
     }
 
