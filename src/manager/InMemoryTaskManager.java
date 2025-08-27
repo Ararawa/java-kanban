@@ -13,11 +13,14 @@ public class InMemoryTaskManager implements TaskManager {
     public HashMap<Integer, Subtask> subtasks = new HashMap<>();
     public HashMap<Integer, Epic> epics = new HashMap<>();
 
+    public ArrayList<Task> history = new ArrayList<>();
+    public static final int HYSTORY_SIZE = 10;
+
     public int generateNumber() {
         return ++number;
     }
 
-    public TaskStatus calculateStatus(Epic epic) {
+    TaskStatus calculateStatus(Epic epic) {
         int inProgress = 0;
         int done = 0;
         int news = 0;
@@ -37,6 +40,13 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             return TaskStatus.IN_PROGRESS;
         }
+    }
+
+    void addTaskToHistory(Task task) {
+        if (history.size() == HYSTORY_SIZE) {
+            history.removeFirst();
+        }
+        history.add(task);
     }
 
     @Override
@@ -66,10 +76,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getByID(int id) {
         if (tasks.containsKey(id)) {
+            addTaskToHistory(tasks.get(id));
             return tasks.get(id);
         } else if (epics.containsKey(id)) {
+            addTaskToHistory(epics.get(id));
             return epics.get(id);
         } else if (subtasks.containsKey(id)) {
+            addTaskToHistory(subtasks.get(id));
             return subtasks.get(id);
         }
         return null;
@@ -140,5 +153,10 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return allTasks;
+    }
+
+    @Override
+    public ArrayList<Task> getHistory() {
+        return history;
     }
 }

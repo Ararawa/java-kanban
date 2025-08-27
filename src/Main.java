@@ -16,7 +16,7 @@ public class Main {
         Task task2 = new Task("name2", InMemoryTaskManager.generateNumber(), "description1", TaskStatus.NEW);
         InMemoryTaskManager.create(task2);
         Epic epic1 = new Epic("name3", InMemoryTaskManager.generateNumber(), "description1", TaskStatus.NEW);
-        InMemoryTaskManager.create(epic1);
+        InMemoryTaskManager.create(epic1); /*
         System.out.println(InMemoryTaskManager.getByID(3));
         Subtask subtask1 = new Subtask("name4", InMemoryTaskManager.generateNumber(), "description1", TaskStatus.DONE, epic1.getID());
         InMemoryTaskManager.create(subtask1);
@@ -49,7 +49,28 @@ public class Main {
         ArrayList<Task> arrayList3 = InMemoryTaskManager.returnAllTasks();
         for (int i = 0; i < arrayList3.size(); i++) {
             System.out.println(arrayList3.get(i).toString());
+        } */
+        System.out.println("---");
+        InMemoryTaskManager.getByID(1); //1
+        InMemoryTaskManager.getByID(2); //2
+        InMemoryTaskManager.getByID(3); //3
+        InMemoryTaskManager.getByID(2); //4
+        InMemoryTaskManager.getByID(3); //5
+        InMemoryTaskManager.getByID(1); //6
+        ArrayList<Task> history1 = InMemoryTaskManager.getHistory();
+        for (Task task : history1) {
+            System.out.println(task);
         }
         System.out.println("---");
+        InMemoryTaskManager.getByID(1); //7
+        InMemoryTaskManager.getByID(1); //8
+        InMemoryTaskManager.getByID(1); //9
+        InMemoryTaskManager.getByID(1); //10
+        InMemoryTaskManager.getByID(1); //11
+        InMemoryTaskManager.getByID(1); //12
+        ArrayList<Task> history2 = InMemoryTaskManager.getHistory();
+        for (Task task : history2) {
+            System.out.println(task);
+        }
     }
 }
