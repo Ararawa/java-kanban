@@ -9,15 +9,18 @@ public class Task {
         return id;
     }
 
-    public final int id;
+    public int id;
     public String description;
     public TaskStatus status;
 
-    public Task(String name, int id, String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
-        this.id = id;
         this.status = status;
         this.description = description;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

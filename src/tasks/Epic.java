@@ -3,8 +3,8 @@ package tasks;
 import java.util.ArrayList;
 
 public class Epic extends Task{
-    public Epic(String name, int id, String description, TaskStatus status) {
-        super(name, id, description, status);
+    public Epic(String name, String description, TaskStatus status) {
+        super(name, description, status);
     }
 
     public ArrayList<Integer> epicSubtasks = new ArrayList<>();

@@ -91,18 +91,23 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void create(Task task) {
         if (task instanceof Epic) {
-            Epic epic = new Epic(task.name, task.id, task.description, task.status);
+            Epic epic = new Epic(task.name, task.description, task.status);
+            epic.setId(generateNumber());
             epic.epicSubtasks = ((Epic) task).epicSubtasks;
             epic.status = calculateStatus(epic);
             epics.put(epic.id, epic);
         } else if (task instanceof Subtask) {
-            Subtask subtask = new Subtask(task.name, task.id, task.description, task.status,
-                    ((Subtask) task).epicID);
+            Subtask subtask = new Subtask(task.name, task.description, task.status, ((Subtask) task).epicID);
+            subtask.setId(generateNumber());
+            System.out.println(subtask.id);
             subtasks.put(subtask.id, subtask);
+            System.out.println(subtasks.get(subtask.id));
             epics.get(subtask.epicID).epicSubtasks.add(subtask.id);
             epics.get(subtask.epicID).status = calculateStatus(epics.get(subtask.epicID));
         } else if (task != null) {
-            tasks.put(task.id, new Task(task.name, task.id, task.description, task.status));
+            Task task1 = new Task(task.name, task.description, task.status);
+            task1.setId(generateNumber());
+            tasks.put(task1.id, task1);
         }
     }
 
