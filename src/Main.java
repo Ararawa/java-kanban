@@ -1,3 +1,4 @@
+import manager.HistoryManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
@@ -12,6 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager manager = Managers.getDefault();
+        HistoryManager managerH = Managers.getDefaultHistory();
         System.out.println("Поехали!");
         Task task1 = new Task("name1", "description1", TaskStatus.NEW);
         manager.create(task1);
@@ -38,7 +40,6 @@ public class Main {
         System.out.println("---");
         Subtask subtask4 = new Subtask("n7", "destion1", TaskStatus.DONE, 5);
         subtask4.setId(6);
-        System.out.println(subtask4.id);
         manager.update(subtask4);
         System.out.println(manager.getByID(5)); //3
         manager.deleteByID(5);
@@ -50,10 +51,13 @@ public class Main {
         System.out.println("---");
         System.out.println(manager.getSubtasksByEpicID(3));
         manager.deleteAllTasks();
+        System.out.println("---");
         ArrayList<Task> arrayList3 = manager.returnAllTasks();
         for (int i = 0; i < arrayList3.size(); i++) {
             System.out.println(arrayList3.get(i).toString());
         }
+        System.out.println("---");
+        System.out.println("---");
         System.out.println("---");
         manager.getByID(1); //1
         manager.getByID(2); //2
@@ -61,7 +65,7 @@ public class Main {
         manager.getByID(2); //4
         manager.getByID(3); //5
         manager.getByID(1); //6
-        ArrayList<Task> history1 = manager.getHistory();
+        ArrayList<Task> history1 = managerH.getHistory();
         for (Task task : history1) {
             System.out.println(task);
         }
@@ -72,7 +76,7 @@ public class Main {
         manager.getByID(1); //10
         manager.getByID(1); //11
         manager.getByID(1); //12
-        ArrayList<Task> history2 = manager.getHistory();
+        ArrayList<Task> history2 = managerH.getHistory();
         for (Task task : history2) {
             System.out.println(task);
         }

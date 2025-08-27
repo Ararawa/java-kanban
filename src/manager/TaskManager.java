@@ -20,6 +20,4 @@ public interface TaskManager {
     void deleteByID(int id);
 
     ArrayList<Subtask> getSubtasksByEpicID(int epicID);
-
-    ArrayList<Task> getHistory();
 }

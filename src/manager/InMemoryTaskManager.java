@@ -13,8 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     public HashMap<Integer, Subtask> subtasks = new HashMap<>();
     public HashMap<Integer, Epic> epics = new HashMap<>();
 
-    public ArrayList<Task> history = new ArrayList<>();
-    public static final int HYSTORY_SIZE = 10;
+    public HistoryManager historyManager = Managers.getDefaultHistory();
 
     public int generateNumber() {
         return ++number;
@@ -42,12 +41,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    void addTaskToHistory(Task task) {
-        if (history.size() == HYSTORY_SIZE) {
-            history.removeFirst();
-        }
-        history.add(task);
-    }
 
     @Override
     public ArrayList<Task> returnAllTasks() {
@@ -76,13 +69,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getByID(int id) {
         if (tasks.containsKey(id)) {
-            addTaskToHistory(tasks.get(id));
+            historyManager.addTaskToHistory(tasks.get(id));
             return tasks.get(id);
         } else if (epics.containsKey(id)) {
-            addTaskToHistory(epics.get(id));
+            historyManager.addTaskToHistory(epics.get(id));
             return epics.get(id);
         } else if (subtasks.containsKey(id)) {
-            addTaskToHistory(subtasks.get(id));
+            historyManager.addTaskToHistory(subtasks.get(id));
             return subtasks.get(id);
         }
         return null;
@@ -99,9 +92,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (task instanceof Subtask) {
             Subtask subtask = new Subtask(task.name, task.description, task.status, ((Subtask) task).epicID);
             subtask.setId(generateNumber());
-            System.out.println(subtask.id);
             subtasks.put(subtask.id, subtask);
-            System.out.println(subtasks.get(subtask.id));
             epics.get(subtask.epicID).epicSubtasks.add(subtask.id);
             epics.get(subtask.epicID).status = calculateStatus(epics.get(subtask.epicID));
         } else if (task != null) {
@@ -158,10 +149,5 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return allTasks;
-    }
-
-    @Override
-    public ArrayList<Task> getHistory() {
-        return history;
     }
 }
