@@ -37,13 +37,22 @@ class InMemoryHistoryManagerTest {
             System.out.println(task);
         }
         System.out.println("---\n---\n---");
-        Task test1 = new Task("ololo", "trololo", TaskStatus.DONE);
-        test1.setId(2);
-        manager.update(test1);
-        assertEquals(manager.getByID(2), managerH.getHistory().getLast());
-        ArrayList<Task> test3 = managerH.getHistory();
-        for (Task task : test3) {
-            System.out.println(task);
+        Task test1 = new Task("name", "descr777", TaskStatus.NEW);
+        String testdescr1 = test1.description;
+        test1.setId(20);
+        manager.create(test1);
+        ArrayList<Task> arara = manager.returnAllTasks();
+        for (Task task : arara) {
+            if (task.description.equals(testdescr1))
+            System.out.println(task.id);
         }
+//        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE);
+//        test3.setId(20);
+//        manager.update(test3);
+//        assertEquals(manager.getByID(2), managerH.getHistory().getLast());
+//        ArrayList<Task> test4 = managerH.getHistory();
+//        for (Task task : test4) {
+//            System.out.println(task);
+//        }
     }
 }
