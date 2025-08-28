@@ -111,6 +111,11 @@ class InMemoryTaskManagerTest {
 
     @Test
     void getSubtasksByEpicID() {
+        Task test1 = manager.getByID(6);
+        Task test2 = manager.getByID(7);
+        ArrayList<Subtask> test3 = manager.getSubtasksByEpicID(5);
+        assertEquals(test1, test3.getFirst());
+        assertEquals(test2, test3.get(1));
     }
 
     @Test
