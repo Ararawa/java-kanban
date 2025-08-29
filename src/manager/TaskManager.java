@@ -3,11 +3,11 @@ package manager;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
-    ArrayList<Task> returnAllTasks();
+    List<Task> getAllTasks();
 
     void deleteAllTasks();
 
@@ -19,5 +19,7 @@ public interface TaskManager {
 
     void deleteByID(int id);
 
-    ArrayList<Subtask> getSubtasksByEpicID(int epicID);
+    List<Subtask> getSubtasksByEpicID(int epicID);
+
+    List<Task> getHistory();
 }

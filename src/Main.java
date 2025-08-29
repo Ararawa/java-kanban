@@ -30,7 +30,7 @@ public class Main {
         Subtask subtask3 = new Subtask("name7", "description1", TaskStatus.NEW, 5);
         manager.create(subtask3);
         System.out.println("---");
-        ArrayList<Task> arrayList = manager.returnAllTasks();
+        ArrayList<Task> arrayList = (ArrayList<Task>) manager.getAllTasks();
         for (int i = 0; i < arrayList.size(); i++) {
             System.out.println(arrayList.get(i).toString());
         }
@@ -43,7 +43,7 @@ public class Main {
         System.out.println(manager.getByID(5)); //3
         manager.deleteByID(5);
         System.out.println("---");
-        ArrayList<Task> arrayList2 = manager.returnAllTasks();
+        ArrayList<Task> arrayList2 = (ArrayList<Task>) manager.getAllTasks();
         for (int i = 0; i < arrayList2.size(); i++) {
             System.out.println(arrayList2.get(i).toString());
         }
@@ -51,7 +51,7 @@ public class Main {
         System.out.println(manager.getSubtasksByEpicID(3));
         manager.deleteAllTasks();
         System.out.println("---");
-        ArrayList<Task> arrayList3 = manager.returnAllTasks();
+        ArrayList<Task> arrayList3 = (ArrayList<Task>) manager.getAllTasks();
         for (int i = 0; i < arrayList3.size(); i++) {
             System.out.println(arrayList3.get(i).toString());
         }

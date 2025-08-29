@@ -56,8 +56,8 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void returnAllTasks() {
-        ArrayList<Task> test1 = manager.returnAllTasks();
+    void getAllTasks() {
+        ArrayList<Task> test1 = (ArrayList<Task>) manager.getAllTasks();
         for (Task task : test1) {
             assertEquals(manager.getByID(task.id), task);
         }
@@ -113,7 +113,7 @@ class InMemoryTaskManagerTest {
     void getSubtasksByEpicID() {
         Task test1 = manager.getByID(6);
         Task test2 = manager.getByID(7);
-        ArrayList<Subtask> test3 = manager.getSubtasksByEpicID(5);
+        ArrayList<Subtask> test3 = (ArrayList<Subtask>) manager.getSubtasksByEpicID(5);
         assertEquals(test1, test3.getFirst());
         assertEquals(test2, test3.get(1));
     }
@@ -123,7 +123,7 @@ class InMemoryTaskManagerTest {
         Task test1 = new Epic("yammy", "description1", TaskStatus.NEW);
         String testname1 = test1.name;
         manager.create(test1);
-        ArrayList<Task> test2 = manager.returnAllTasks();
+        ArrayList<Task> test2 = (ArrayList<Task>) manager.getAllTasks();
         for (Task task : test2) {
             if (task.name.equals(testname1)) {
                 assertFalse(task instanceof Subtask);
@@ -134,7 +134,7 @@ class InMemoryTaskManagerTest {
         String testname2 = test3.name;
         test3.setId(6);
         manager.create(test3);
-        ArrayList<Task> test4 = manager.returnAllTasks();
+        ArrayList<Task> test4 = (ArrayList<Task>) manager.getAllTasks();
         for (Task task : test4) {
             if (task.name.equals(testname2)) {
                 assertFalse(task instanceof Subtask);
@@ -150,5 +150,34 @@ class InMemoryTaskManagerTest {
         assertInstanceOf(Subtask.class, test1);
         assertFalse(test1 instanceof Epic);
         System.out.println(manager.getByID(3));
+    }
+
+    @Test
+    void getHistory() {
+        assertEquals(manager.getByID(2), manager.getHistory().getLast());
+        ArrayList<Task> test2 = (ArrayList<Task>) manager.getHistory();
+        for (Task task : test2) {
+            System.out.println(task);
+        }
+        System.out.println("---\n---\n---");
+        Task test1 = new Task("name", "descr777", TaskStatus.NEW);
+        String testdescr1 = test1.description;
+        test1.setId(20);
+        manager.create(test1);
+        ArrayList<Task> arara = (ArrayList<Task>) manager.getAllTasks();
+        int testnumber = 0;
+        for (Task task : arara) {
+            if (task.description.equals(testdescr1))
+                testnumber = task.id;
+        }
+        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE);
+        test3.setId(testnumber);
+        manager.update(test3);
+        assertEquals(manager.getByID(testnumber), manager.getHistory().getLast());
+        ArrayList<Task> test4 = (ArrayList<Task>) manager.getHistory();
+        for (Task task : test4) {
+            System.out.println(task);
+        }
+        System.out.println("---\n---\n---");
     }
 }

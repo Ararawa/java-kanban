@@ -43,7 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public ArrayList<Task> returnAllTasks() {
+    public ArrayList<Task> getAllTasks() {
         ArrayList<Task> allTasks = new ArrayList<>();
         for (int i : tasks.keySet()) {
             allTasks.add(tasks.get(i));
@@ -149,5 +149,10 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return allTasks;
+    }
+
+    @Override
+    public ArrayList<Task> getHistory() {
+        return historyManager.getHistory();
     }
 }

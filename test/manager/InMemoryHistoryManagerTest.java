@@ -31,8 +31,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void getHistory() {
-        assertEquals(manager.getByID(2), managerH.getHistory().getLast());
-        ArrayList<Task> test2 = managerH.getHistory();
+        assertEquals(manager.getByID(2), manager.getHistory().getLast());
+        ArrayList<Task> test2 = (ArrayList<Task>) manager.getHistory();
         for (Task task : test2) {
             System.out.println(task);
         }
@@ -41,18 +41,20 @@ class InMemoryHistoryManagerTest {
         String testdescr1 = test1.description;
         test1.setId(20);
         manager.create(test1);
-        ArrayList<Task> arara = manager.returnAllTasks();
+        ArrayList<Task> arara = (ArrayList<Task>) manager.getAllTasks();
+        int testnumber = 0;
         for (Task task : arara) {
             if (task.description.equals(testdescr1))
-            System.out.println(task.id);
+                testnumber = task.id;
         }
-//        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE);
-//        test3.setId(20);
-//        manager.update(test3);
-//        assertEquals(manager.getByID(2), managerH.getHistory().getLast());
-//        ArrayList<Task> test4 = managerH.getHistory();
-//        for (Task task : test4) {
-//            System.out.println(task);
-//        }
+        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE);
+        test3.setId(testnumber);
+        manager.update(test3);
+        assertEquals(manager.getByID(testnumber), manager.getHistory().getLast());
+        ArrayList<Task> test4 = (ArrayList<Task>) manager.getHistory();
+        for (Task task : test4) {
+            System.out.println(task);
+        }
+        System.out.println("---\n---\n---");
     }
 }
