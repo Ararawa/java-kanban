@@ -12,7 +12,6 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager manager = Managers.getDefault();
-        HistoryManager managerH = Managers.getDefaultHistory();
         System.out.println("Поехали!");
         Task task1 = new Task("name1", "description1", TaskStatus.NEW);
         manager.create(task1);
@@ -64,7 +63,7 @@ public class Main {
         manager.getByID(2); //4
         manager.getByID(3); //5
         manager.getByID(1); //6
-        ArrayList<Task> history1 = managerH.getHistory();
+        ArrayList<Task> history1 = (ArrayList<Task>) manager.getHistory();
         for (Task task : history1) {
             System.out.println(task);
         }
@@ -75,7 +74,7 @@ public class Main {
         manager.getByID(1); //10
         manager.getByID(1); //11
         manager.getByID(1); //12
-        ArrayList<Task> history2 = managerH.getHistory();
+        ArrayList<Task> history2 = (ArrayList<Task>) manager.getHistory();
         for (Task task : history2) {
             System.out.println(task);
         }
