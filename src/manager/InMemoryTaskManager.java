@@ -134,6 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epics.remove(id);
         }
+        historyManager.remove(id);
     }
 
     @Override
