@@ -21,17 +21,19 @@ public class InMemoryHistoryManager implements HistoryManager{
             historyMap.put(task.id, newLast);
             history.add(historyMap.get(task.id));
         } else {
-            Node oldLastNode = history.getLast();
+            int oldLast = history.getLast().task.id;
             historyMap.put(task.id, newLast);
             history.add(historyMap.get(task.id));
-            linkLast(task.id, oldLastNode.task.id);
+            linkLast(task.id, oldLast);
         }
     }
 
     @Override
     public void remove(int id) {
-        history.remove(historyMap.get(id));
-        removeNode(historyMap.get(id));
+        if (historyMap.get(id) != null) {
+            history.remove(historyMap.get(id));
+            removeNode(historyMap.get(id));
+        }
     }
 
     @Override
@@ -49,10 +51,13 @@ public class InMemoryHistoryManager implements HistoryManager{
             historyMap.get(id).previous.next = historyMap.get(id).next;
             historyMap.get(id).next.previous = historyMap.get(id).previous;
         }
-        historyMap.remove(id);
+        //historyMap.remove(id);
     }
 
     void linkLast(int newLast, int oldLast) {
+        if (historyMap.get(oldLast) == null) {
+            System.out.println("(historyMap.get(oldLast) == null)");
+        }
         historyMap.get(oldLast).next = historyMap.get(newLast);
         historyMap.get(newLast).previous = historyMap.get(oldLast);
     }

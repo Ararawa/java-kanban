@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryHistoryManagerTest {
 
     TaskManager manager;
-    HistoryManager historyManager;
 
     @BeforeEach
     void setUp() {
@@ -25,17 +24,15 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void addTaskToHistory() {
-        Task task3 = new Task("name3", "description3", TaskStatus.NEW);
-        manager.create(task3);
-        System.out.println(manager.getByID(3));
+        System.out.println(manager.getByID(2));
+        manager.getByID(1);
         manager.getByID(2);
-        manager.getByID(3);
-        manager.getByID(2);
-        assertEquals(manager.getByID(3), manager.getHistory().getLast());
+        manager.getByID(1);
+        assertEquals(manager.getByID(2), manager.getHistory().getLast());
         ArrayList<Task> list1 = (ArrayList<Task>) manager.getHistory();
         int duobles = -1;
         for (Task task : list1) {
-            if (task.id == 3) {
+            if (task.id == 2) {
                 duobles++;
             }
         }
