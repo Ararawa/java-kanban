@@ -55,9 +55,6 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     void linkLast(int newLast, int oldLast) {
-        if (historyMap.get(oldLast) == null) {
-            System.out.println("(historyMap.get(oldLast) == null)");
-        }
         historyMap.get(oldLast).next = historyMap.get(newLast);
         historyMap.get(newLast).previous = historyMap.get(oldLast);
     }
