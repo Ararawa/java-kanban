@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.HashMap;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
     public LinkedList<Node> history = new LinkedList<>();
 
     public HashMap<Integer, Node> historyMap = new HashMap<>();
