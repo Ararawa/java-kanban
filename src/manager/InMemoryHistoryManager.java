@@ -41,11 +41,11 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     public void removeNode(Node node) {
         int id = node.task.id;
-        if (historyMap.get(id).previous == null) {
+        if (historyMap.get(id).previous == null && historyMap.get(id).next != null) {
             historyMap.get(id).next.previous = null;
-        } else if (historyMap.get(id).next == null) {
+        } else if (historyMap.get(id).previous != null && historyMap.get(id).next == null) {
             historyMap.get(id).previous.next = null;
-        } if (historyMap.get(id).previous != null && historyMap.get(id).next != null) {
+        } else if (historyMap.get(id).previous != null && historyMap.get(id).next != null) {
             historyMap.get(id).previous.next = historyMap.get(id).next;
             historyMap.get(id).next.previous = historyMap.get(id).previous;
         }
