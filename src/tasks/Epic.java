@@ -7,12 +7,20 @@ public class Epic extends Task {
         super(name, description, status);
     }
 
-    public ArrayList<Integer> epicSubtasks = new ArrayList<>();
+    private ArrayList<Integer> epicSubtasks = new ArrayList<>();
 
     @Override
     public String toString() {
         return "tasks.Epic{" + super.toString() +
                 " epicSubtasks=" + epicSubtasks +
                 "}";
+    }
+
+    public ArrayList<Integer> getEpicSubtasks() {
+        return epicSubtasks;
+    }
+
+    public void setEpicSubtasks(ArrayList<Integer> epicSubtasks) {
+        this.epicSubtasks = epicSubtasks;
     }
 }
