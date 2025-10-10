@@ -23,6 +23,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             history.add(historyMap.get(task.id));
         } else {
             int oldLast = history.getLast().task.id;
+            historyMap.put(oldLast, history.getLast());
             historyMap.put(task.id, newLast);
             history.add(historyMap.get(task.id));
             linkLast(task.id, oldLast);
@@ -52,7 +53,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             historyMap.get(id).previous.next = historyMap.get(id).next;
             historyMap.get(id).next.previous = historyMap.get(id).previous;
         }
-        //historyMap.remove(id);
+        historyMap.remove(id);
     }
 
     void linkLast(int newLast, int oldLast) {
