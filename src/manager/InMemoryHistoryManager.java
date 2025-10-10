@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public HashMap<Integer, Node> historyMap = new HashMap<>();
 
     @Override
-    public void addTaskToHistory(Task task) {
+    public void add(Task task) {
         if (historyMap.containsKey(task.id)) {
             remove(task.id);
         }

@@ -23,7 +23,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void addTaskToHistory() {
+    void add() {
         System.out.println(manager.getByID(2));
         manager.getByID(1);
         manager.getByID(2);
