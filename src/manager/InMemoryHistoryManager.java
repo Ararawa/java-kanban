@@ -18,7 +18,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             remove(task.id);
         }
         Node newLast = new Node(null, null, task);
-        if (history.isEmpty()) {
+        if (historyMap.isEmpty()) {
             historyMap.put(task.id, newLast);
             history.add(historyMap.get(task.id));
         } else {
@@ -33,7 +33,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(int id) {
         if (historyMap.get(id) != null) {
-            history.remove(historyMap.get(id));
             removeNode(historyMap.get(id));
         }
     }
@@ -62,10 +61,29 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     List<Task> getTasks() {
-        List<Task> list = new ArrayList<>();
-        for (Node n : history) {
-            list.add(n.task);
+        List<Task> historyOut = new ArrayList<>();
+        if (historyMap.isEmpty()) {
+            return historyOut;
         }
-        return list;
+        int nextID = -1;
+        for (int id : historyMap.keySet()) {
+            if (historyMap.get(id).previous == null) {
+                historyOut.add(historyMap.get(id).task);
+                if (historyMap.get(id).next != null) {
+                    nextID = historyMap.get(id).next.task.id;
+                } else {
+                    return historyOut;
+                }
+                for (int i = 0; i < historyMap.size(); i++) {
+                    historyOut.add(historyMap.get(nextID).task);
+                    if (historyMap.get(nextID).next != null) {
+                        nextID = historyMap.get(nextID).next.task.id;
+                    } else {
+                        return historyOut;
+                    }
+                }
+            }
+        }
+        return historyOut;
     }
 }
