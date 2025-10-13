@@ -34,6 +34,11 @@ class InMemoryTaskManagerTest {
         manager.create(subtask3);
     }
 
+    @AfterEach
+    void cleanUp() {
+        manager.deleteAllTasks();
+    }
+
     @Test
     void calculateStatus() {
         assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(5).status);

@@ -1,5 +1,6 @@
 package manager;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Task;
@@ -20,6 +21,11 @@ class InMemoryHistoryManagerTest {
         manager.create(task1);
         Task task2 = new Task("name2", "description2", TaskStatus.NEW);
         manager.create(task2);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        manager.deleteAllTasks();
     }
 
     @Test
