@@ -1,5 +1,6 @@
 package manager;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -31,7 +32,11 @@ class InMemoryTaskManagerTest {
         manager.create(subtask2);
         Subtask subtask3 = new Subtask("name7", "description1", TaskStatus.NEW, 5);
         manager.create(subtask3);
+    }
 
+    @AfterEach
+    void cleanUp() {
+        manager.deleteAllTasks();
     }
 
     @Test
@@ -66,9 +71,7 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteAllTasks() {
         manager.deleteAllTasks();
-        for (int i = 0; i < 10; i++) {
-            assertNull(manager.getByID(i));
-        }
+        assertTrue(manager.getAllTasks().isEmpty());
     }
 
     @Test
