@@ -10,8 +10,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     String filename;
 
-    public FileBackedTaskManager(String filename) {
-        this.filename = filename;
+    public FileBackedTaskManager(File file) {
+        this.filename = file.getName();
     }
 
     @Override
@@ -87,9 +87,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 task.id, type, task.name, task.status, task.description, epicID);
     }
 
-    static FileBackedTaskManager loadFromFile(File file) {}
+    static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager fbtmNew = new FileBackedTaskManager(file);
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            br.readLine();
+            while (br.ready()) {
+                String line = br.readLine();
+                fbtmNew.fromString(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fbtmNew;
+    }
 
-    Task fromString(String loaded) {
+    static Task fromString(String loaded) {
         Task task = null;
         TaskStatus status = null;
         String[] split = loaded.split(",");
