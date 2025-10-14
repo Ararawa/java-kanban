@@ -86,4 +86,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return String.format("%s,%s,%s,%s,%s,%s",
                 task.id, type, task.name, task.status, task.description, epicID);
     }
+
+    static FileBackedTaskManager loadFromFile(File file) {}
+
+    Task fromString(String loaded) {
+        Task task = null;
+        TaskStatus status = null;
+        String[] split = loaded.split(",");
+        if (split[3].equals(String.valueOf(TaskStatus.NEW))) {
+            status = TaskStatus.NEW;
+        } else if (split[3].equals(String.valueOf(TaskStatus.IN_PROGRESS))) {
+            status = TaskStatus.IN_PROGRESS;
+        } else if (split[3].equals(String.valueOf(TaskStatus.DONE))) {
+            status = TaskStatus.DONE;
+        }
+        if (split[1].equals(String.valueOf(TaskType.EPIC))) {
+            task = new Epic(split[2], split[4], status);
+        } else if (split[1].equals(String.valueOf(TaskType.SUBTASK))) {
+            task = new Subtask(split[2], split[4], status, Integer.parseInt(split[5]));
+        } else if (split[1].equals(String.valueOf(TaskType.TASK))) {
+            task = new Task(split[2], split[4], status);
+        }
+        task.id = Integer.parseInt(split[0]);
+        return task;
+    }
 }
