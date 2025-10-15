@@ -64,7 +64,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             ArrayList<Task> allTasks = getAllTasks();
             writer.write(headLine + "\n");
             for (Task task : allTasks) {
-                writer.write(toString(task) + "\n");
+                writer.write(taskToString(task) + "\n");
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -73,7 +73,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public String toString(Task task) {
+    public String taskToString(Task task) {
         String type;
         String epicID = "";
         if (task instanceof Subtask) {
@@ -88,7 +88,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 task.id, type, task.name, task.status, task.description, epicID);
     }
 
-    public FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fbtmNew = new FileBackedTaskManager(file);
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
@@ -107,7 +107,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return fbtmNew;
     }
 
-    public Task fromString(String loaded) {
+    public static Task fromString(String loaded) {
         Task task = null;
         TaskStatus status = null;
         String[] split = loaded.split(",");
