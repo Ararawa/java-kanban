@@ -27,7 +27,7 @@ class FileBackedTaskManagerTest {
                 Files.createFile(path);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new ManagerSaveException("Save test IOExсeption", e);
         }
     }
 
@@ -36,7 +36,7 @@ class FileBackedTaskManagerTest {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new ManagerSaveException("Save test IOExсeption", e);
         }
     }
 
@@ -176,7 +176,7 @@ class FileBackedTaskManagerTest {
                 assertEquals(t1, line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ManagerSaveException("Save test IOExсeption", e);
         }
 
     }
@@ -196,7 +196,7 @@ class FileBackedTaskManagerTest {
             String line = br.readLine();
             assertEquals(t1, line);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ManagerSaveException("Save test IOExсeption", e);
         }
     }
 
@@ -225,7 +225,7 @@ class FileBackedTaskManagerTest {
             assertEquals(test1, test2);
             assertEquals(test1.toString(), test2.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ManagerSaveException("Save test IOExсeption", e);
         }
     }
 }

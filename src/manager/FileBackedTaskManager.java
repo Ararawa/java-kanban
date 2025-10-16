@@ -69,11 +69,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
         } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Ошибка при сохранении данных", e);
-            } catch (ManagerSaveException ex) {
-                System.out.println(ex.getMessage());
-            }
+            throw new ManagerSaveException("Ошибка при сохранении данных", e);
         }
     }
 
@@ -106,7 +102,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 fbtmNew.create(task);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ManagerSaveException("Save test IOExсeption", e);
         }
         return fbtmNew;
     }
