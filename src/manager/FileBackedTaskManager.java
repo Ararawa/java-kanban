@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    String filename;
+    File file;
 
     public FileBackedTaskManager(File file) {
-        this.filename = file.getName();
+        this.file = file;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public void save() {
-        try (FileWriter writer = new FileWriter(filename, StandardCharsets.UTF_8)) {
+        try (FileWriter writer = new FileWriter(file.getName(), StandardCharsets.UTF_8)) {
             String headLine = "id,type,name,status,description,epic";
             ArrayList<Task> allTasks = getAllTasks();
             writer.write(headLine + "\n");
