@@ -18,13 +18,14 @@ class FileBackedTaskManagerTest {
     static String filename = "TestFBTM";
     static String suffix = ".csv";
     static Path path;
+    static File file;
 
     @BeforeAll
     static void fileCreate() {
         try {
             path = Paths.get(filename + suffix);
             if (Files.notExists(path)) {
-                Files.createFile(path);
+                file = File.createTempFile(filename, suffix);
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Save test IOExсeption", e);
@@ -34,7 +35,7 @@ class FileBackedTaskManagerTest {
     @AfterAll
     static void fileDelete() {
         try {
-            Files.delete(path);
+            Files.delete(Paths.get(file.getName()));
         } catch (IOException e) {
             throw new ManagerSaveException("Save test IOExсeption", e);
         }
@@ -42,7 +43,7 @@ class FileBackedTaskManagerTest {
 
     @BeforeEach
     void setUp() {
-        manager = Managers.getFileManipulator(path.toFile());
+        manager = Managers.getFileManipulator(file);
         Task task1 = new Task("name1", "description1", TaskStatus.NEW);
         manager.create(task1);
         Task task2 = new Task("name2", "description1", TaskStatus.NEW);
@@ -157,8 +158,8 @@ class FileBackedTaskManagerTest {
     @Test
     void save() {
         ArrayList<Task> test1 = (ArrayList<Task>) manager.getAllTasks();
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(new FileInputStream(path.toFile()), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                new FileInputStream(Paths.get(file.getName()).toFile()), StandardCharsets.UTF_8))) {
             br.readLine();
             for (Task task: test1) {
                 String line = br.readLine();
@@ -190,8 +191,8 @@ class FileBackedTaskManagerTest {
         String epicID = "";
         String type = String.valueOf(TaskType.TASK);
         String t1 = String.format("%s,%s,%s,%s,%s,%s", task.id, type, task.name, task.status, task.description, epicID);
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(new FileInputStream(path.toFile()), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                new FileInputStream(Paths.get(file.getName()).toFile()), StandardCharsets.UTF_8))) {
             br.readLine();
             String line = br.readLine();
             assertEquals(t1, line);
@@ -203,7 +204,7 @@ class FileBackedTaskManagerTest {
     @Test
     void loadFromFile() {
         ArrayList<Task> test1 = (ArrayList<Task>) manager.getAllTasks();
-        manager = FileBackedTaskManager.loadFromFile(path.toFile());
+        manager = FileBackedTaskManager.loadFromFile(Paths.get(file.getName()).toFile());
         ArrayList<Task> test2 = (ArrayList<Task>) manager.getAllTasks();
         for (int i = 0; i < test1.size(); i++) {
             assertEquals(test1.get(i), test2.get(i));
@@ -217,8 +218,8 @@ class FileBackedTaskManagerTest {
         Task task1 = new Task("name1", "description1", TaskStatus.NEW);
         manager.create(task1);
         Task test1 = manager.getByID(8);
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(new FileInputStream(path.toFile()), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                new FileInputStream(Paths.get(file.getName()).toFile()), StandardCharsets.UTF_8))) {
             br.readLine();
             String line = br.readLine();
             Task test2 = FileBackedTaskManager.fromString(line);
