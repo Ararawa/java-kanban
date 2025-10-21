@@ -24,6 +24,14 @@ public class Task {
         this.description = description;
     }
 
+    public Task(String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.status = status;
+        this.description = description;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
