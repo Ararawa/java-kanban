@@ -8,9 +8,13 @@ import tasks.TaskStatus;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 public class InMemoryTaskManager implements TaskManager {
+
+    public TreeSet<Task> prioritizedTasks = new TreeSet<>();
 
     public int number = 0;
 
@@ -150,6 +154,9 @@ public class InMemoryTaskManager implements TaskManager {
             task1.setId(generateNumber());
             tasks.put(task1.id, task1);
         }
+        if (task != null) {
+            setPriority(task);
+        }
     }
 
     @Override
@@ -179,6 +186,9 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.get(task.id).name = task.name;
             tasks.get(task.id).startTime = task.startTime;
             tasks.get(task.id).duration = task.duration;
+        }
+        if (task != null) {
+            setPriority(task);
         }
     }
 
@@ -224,5 +234,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<Task> getHistory() {
         return (ArrayList<Task>) historyManager.getHistory();
+    }
+
+    public ArrayList<Task> getPrioritizedTasks() {
+        if (prioritizedTasks.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return (ArrayList<Task>) prioritizedTasks.stream().toList();
+
+    }
+
+    public void setPriority(Task task) {
+        if (task.startTime == null) {
+            return;
+        }
+        prioritizedTasks.add(task);
     }
 }
