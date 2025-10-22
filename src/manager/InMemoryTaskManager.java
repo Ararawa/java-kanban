@@ -7,10 +7,7 @@ import tasks.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -52,26 +49,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     LocalDateTime calculateEpicStart(Epic epic) {
         if (!epic.getEpicSubtasks().isEmpty()) {
-            LocalDateTime start = subtasks.get(epic.getEpicSubtasks().getFirst()).startTime;
-            for(int i : epic.getEpicSubtasks()) {
-                if (subtasks.get(i).startTime != null && subtasks.get(i).startTime.isBefore(start)) {
-                    start = subtasks.get(i).startTime;
-                }
-            }
-            return start;
+            return epic.getEpicSubtasks()
+                    .stream()
+                    .map(i -> subtasks.get(i).startTime)
+                    .filter(Objects::nonNull)
+                    .min(LocalDateTime::compareTo)
+                    .orElse(subtasks.get(epic.getEpicSubtasks().getFirst()).startTime);
         }
         return null;
     }
 
     LocalDateTime calculateEpicEnd(Epic epic) {
         if (!epic.getEpicSubtasks().isEmpty()) {
-            LocalDateTime end = subtasks.get(epic.getEpicSubtasks().getFirst()).getEndTime();
-            for(int i : epic.getEpicSubtasks()) {
-                if (subtasks.get(i).getEndTime() != null && subtasks.get(i).getEndTime().isAfter(end)) {
-                    end = subtasks.get(i).getEndTime();
-                }
-            }
-            return end;
+            return epic.getEpicSubtasks()
+                    .stream()
+                    .map(i -> subtasks.get(i).getEndTime())
+                    .filter(Objects::nonNull)
+                    .min(LocalDateTime::compareTo)
+                    .orElse(subtasks.get(epic.getEpicSubtasks().getFirst()).getEndTime());
         }
         return null;
     }
@@ -86,10 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Task> getAllTasks() {
-        ArrayList<Task> allTasks = new ArrayList<>();
-        for (int i : tasks.keySet()) {
-            allTasks.add(tasks.get(i));
-        }
+        ArrayList<Task> allTasks = new ArrayList<>(tasks.values());
         for (int i : epics.keySet()) {
             allTasks.add(epics.get(i));
             for (int j : subtasks.keySet()) {
@@ -204,7 +196,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteByID(int id) {
         if (tasks.containsKey(id)) {
-//            prioritizedTasks.remove(tasks.get(id));
             tasks.remove(id);
         } else if (subtasks.containsKey(id)) {
             int epicID = subtasks.get(id).epicID;
@@ -215,15 +206,12 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(epicID).startTime = calculateEpicStart(epics.get(epicID));
             epics.get(epicID).endTime = calculateEpicEnd(epics.get(epicID));
             epics.get(epicID).duration = calculateEpicDuration(epics.get(epicID));
-//            prioritizedTasks.remove(subtasks.get(id));
             subtasks.remove(id);
         } else {
             for (int i = 0; i < epics.get(id).getEpicSubtasks().size(); i++) {
-//                prioritizedTasks.remove(subtasks.get(epics.get(id).getEpicSubtasks().get(i)));
                 subtasks.remove(epics.get(id).getEpicSubtasks().get(i));
             }
             epics.get(id).setEpicSubtasks(new ArrayList<>());
-//            prioritizedTasks.remove(epics.get(id));
             epics.remove(id);
         }
         historyManager.remove(id);
@@ -231,17 +219,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Subtask> getSubtasksByEpicID(int epicID) {
-        ArrayList<Subtask> allTasks = new ArrayList<>();
-        for (int i : epics.keySet()) {
-            if (i == epicID) {
-                for (int j : subtasks.keySet()) {
-                    if (subtasks.get(j).epicID == epics.get(i).getID()) {
-                        allTasks.add(subtasks.get(j));
-                    }
-                }
-            }
-        }
-        return allTasks;
+        return new ArrayList<>(subtasks.values()
+                .stream()
+                .filter(subtask -> (subtask.epicID == epicID))
+                .toList());
     }
 
     @Override
