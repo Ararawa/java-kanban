@@ -64,7 +64,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void save() {
         try (FileWriter writer = new FileWriter(file.getName(), StandardCharsets.UTF_8)) {
             String headLine = "id,type,name,status,description,startTime,duration,epic";
+            System.out.println("--- allTasks ---");
             ArrayList<Task> allTasks = getAllTasks();
+            allTasks.forEach(System.out::println);
+            System.out.println("--- allTasks ---");
             writer.write(headLine + "\n");
             for (Task task : allTasks) {
                 writer.write(taskToString(task) + "\n");

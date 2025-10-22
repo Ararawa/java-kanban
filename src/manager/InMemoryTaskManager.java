@@ -109,6 +109,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (int id : allId) {
             deleteByID(id);
         }
+        prioritizedTasks.clear();
     }
 
     @Override
@@ -128,6 +129,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void create(Task task) {
+        if (scheduleConflict(task)) {
+            System.out.println("Schedule conflict in create!");
+            return;
+        }
         if (task instanceof Epic) {
             Epic epic = new Epic(task.name, task.description, task.status, task.startTime, task.duration);
             epic.setId(generateNumber());
@@ -161,6 +166,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void update(Task task) {
+        if (scheduleConflict(task)) {
+            System.out.println("Schedule conflict in update!");
+            return;
+        }
         if (task instanceof Epic) {
             epics.get(task.id).description = task.description;
             epics.get(task.id).name = task.name;
@@ -195,6 +204,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteByID(int id) {
         if (tasks.containsKey(id)) {
+//            prioritizedTasks.remove(tasks.get(id));
             tasks.remove(id);
         } else if (subtasks.containsKey(id)) {
             int epicID = subtasks.get(id).epicID;
@@ -205,12 +215,15 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(epicID).startTime = calculateEpicStart(epics.get(epicID));
             epics.get(epicID).endTime = calculateEpicEnd(epics.get(epicID));
             epics.get(epicID).duration = calculateEpicDuration(epics.get(epicID));
+//            prioritizedTasks.remove(subtasks.get(id));
             subtasks.remove(id);
         } else {
             for (int i = 0; i < epics.get(id).getEpicSubtasks().size(); i++) {
+//                prioritizedTasks.remove(subtasks.get(epics.get(id).getEpicSubtasks().get(i)));
                 subtasks.remove(epics.get(id).getEpicSubtasks().get(i));
             }
             epics.get(id).setEpicSubtasks(new ArrayList<>());
+//            prioritizedTasks.remove(epics.get(id));
             epics.remove(id);
         }
         historyManager.remove(id);
@@ -249,5 +262,24 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         prioritizedTasks.add(task);
+    }
+
+    public boolean checkForCrossing(Task task1, Task task2) {
+        return task1.startTime.plus(task1.duration).isAfter(task2.startTime);
+    }
+
+    public boolean scheduleConflict(Task task) {
+        boolean conflict = false;
+        if (task instanceof Subtask) {
+            conflict = prioritizedTasks
+                    .stream()
+                    .filter(task1 -> !(task1 instanceof Epic))
+                    .anyMatch(task1 -> task1.startTime.plus(task1.duration).isAfter(task.startTime));
+        } else {
+            conflict = prioritizedTasks
+                    .stream()
+                    .anyMatch(task1 -> task1.startTime.plus(task1.duration).isAfter(task.startTime));
+        }
+        return conflict;
     }
 }

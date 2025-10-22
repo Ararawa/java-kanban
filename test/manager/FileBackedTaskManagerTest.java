@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -22,7 +23,8 @@ class FileBackedTaskManagerTest {
     static String suffix = ".csv";
     static Path path;
     static File file;
-    static LocalDateTime startTime = LocalDateTime.now();
+    static LocalDateTime startTime = LocalDateTime
+            .parse("2022/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
     static Duration duration = Duration.ofMinutes(5);
 
     @BeforeAll
@@ -51,18 +53,24 @@ class FileBackedTaskManagerTest {
         manager = Managers.getFileManipulator(file);
         Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task1);
+        startTime = startTime.plus(duration).plus(duration);
         Task task2 = new Task("name2", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task2);
+        startTime = startTime.plus(duration).plus(duration);
         Epic epic1 = new Epic("name3", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(epic1);
+        startTime = startTime.plus(duration).plus(duration);
         Subtask subtask1 = new Subtask("name4", "description1", TaskStatus.DONE, 3,
                 startTime, duration);
         manager.create(subtask1);
+        startTime = startTime.plus(duration).plus(duration);
         Epic epic2 = new Epic("name5", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(epic2);
+        startTime = startTime.plus(duration).plus(duration);
         Subtask subtask2 = new Subtask("name6", "description1", TaskStatus.IN_PROGRESS,
                 5, startTime, duration);
         manager.create(subtask2);
+        startTime = startTime.plus(duration).plus(duration);
         Subtask subtask3 = new Subtask("name7", "description1", TaskStatus.NEW,
                 5, startTime, duration);
         manager.create(subtask3);
@@ -89,6 +97,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     void getByID() {
+        startTime = startTime.plus(duration).plus(duration);
         Task test1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
         test1.id = 1;
         Task test2 = manager.getByID(1);
@@ -97,6 +106,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     void create() {
+        startTime = startTime.plus(duration).plus(duration);
         Task test1 = new Task("test1", "test1desc", TaskStatus.DONE, startTime, duration);
         manager.create(test1);
         assertNotNull(manager.getByID(8));
@@ -109,6 +119,7 @@ class FileBackedTaskManagerTest {
     @Test
     void update() {
         Task test1 = manager.getByID(6);
+        startTime = startTime.plus(duration).plus(duration);
         Subtask subtask4 = new Subtask("n7", "destion1", TaskStatus.DONE,
                 5, startTime, duration);
         subtask4.setId(6);
@@ -143,6 +154,7 @@ class FileBackedTaskManagerTest {
             System.out.println(task);
         }
         System.out.println("---\n---\n---");
+        startTime = startTime.plus(duration).plus(duration);
         Task test1 = new Task("name", "descr777", TaskStatus.NEW, startTime, duration);
         String testdescr1 = test1.description;
         test1.setId(20);
@@ -153,6 +165,7 @@ class FileBackedTaskManagerTest {
             if (task.description.equals(testdescr1))
                 testnumber = task.id;
         }
+        startTime = startTime.plus(duration).plus(duration);
         Task test3 = new Task("ololo", "trololo", TaskStatus.DONE, startTime, duration);
         test3.setId(testnumber);
         manager.update(test3);
@@ -197,11 +210,12 @@ class FileBackedTaskManagerTest {
     @Test
     void taskToString() {
         manager.deleteAllTasks();
+        startTime = startTime.plus(duration).plus(duration);
         Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task1);
         Task task = manager.getByID(8);
         String epicID = "";
-        String startTime = task.startTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));;
+        String startTime = task.startTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
         String duration = String.valueOf(task.duration.toMinutes());
         String type = String.valueOf(TaskType.TASK);
         String t1 = String.format("%s,%s,%s,%s,%s,%s,%s,%s", task.id, type, task.name, task.status,
@@ -219,6 +233,7 @@ class FileBackedTaskManagerTest {
     @Test
     void loadFromFile() {
         ArrayList<Task> test1 = (ArrayList<Task>) manager.getAllTasks();
+        test1.forEach(System.out::println);
         manager = FileBackedTaskManager.loadFromFile(Paths.get(file.getName()).toFile());
         ArrayList<Task> test2 = (ArrayList<Task>) manager.getAllTasks();
         for (int i = 0; i < test1.size(); i++) {
@@ -230,6 +245,7 @@ class FileBackedTaskManagerTest {
     @Test
     void fromString() {
         manager.deleteAllTasks();
+        startTime = startTime.plus(duration).plus(duration);
         Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task1);
         Task test1 = manager.getByID(8);
