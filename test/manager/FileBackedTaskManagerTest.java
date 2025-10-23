@@ -68,7 +68,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
                 String line = br.readLine();
                 String type;
                 String epicID = "";
-                String startTime = task.startTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));;
+                String startTime = task.startTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
                 String duration = String.valueOf(task.duration.toMinutes());
                 if (task instanceof Subtask) {
                     epicID += ((Subtask) task).epicID;

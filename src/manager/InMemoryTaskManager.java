@@ -256,7 +256,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public boolean scheduleConflict(Task task) {
-        boolean conflict = false;
+        boolean conflict;
         if (task instanceof Subtask) {
             conflict = prioritizedTasks
                     .stream()

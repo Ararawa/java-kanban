@@ -23,8 +23,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     void statusEpicAllVariations() {
-        InMemoryTaskManager man = (InMemoryTaskManager) manager;
-
         startTime = startTime.plus(duration).plus(duration);
         Epic epic = new Epic("n", "d", TaskStatus.NEW, startTime, duration);
         manager.create(epic);
