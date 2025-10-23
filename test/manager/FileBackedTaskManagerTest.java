@@ -141,4 +141,14 @@ class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
             throw new ManagerSaveException("Save test IOExсeption", e);
         }
     }
+
+    @Test
+    void exceptionFile() {
+        assertThrows(IOException.class, () -> {
+            String filename = "AaA";
+            String suffix = ".csv";
+            Path path = Paths.get(filename + suffix);
+            Files.delete(path);
+        }, "No file to delete");
+    }
 }
