@@ -38,6 +38,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void add() {
+        assertTrue(manager.getHistory().isEmpty());
         System.out.println(manager.getByID(2));
         manager.getByID(1);
         manager.getByID(2);
