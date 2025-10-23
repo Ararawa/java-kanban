@@ -12,7 +12,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -288,10 +287,27 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void setPriority() {
+        manager.deleteAllTasks();
+        InMemoryTaskManager man;
+        man = (InMemoryTaskManager) manager;
+        assertTrue(man.prioritizedTasks.isEmpty());
+        Duration duration1 = Duration.ofMinutes(400);
+        LocalDateTime startTime1 = startTime.plus(duration1);
+        Task task = new Task("n", "d", TaskStatus.NEW, startTime1, duration1);
+        manager.create(task);
+        assertFalse(man.prioritizedTasks.isEmpty());
     }
 
     @Test
     void scheduleConflict() {
+        InMemoryTaskManager man;
+        man = (InMemoryTaskManager) manager;
+        Duration duration1 = Duration.ofMinutes(4000);
+        LocalDateTime startTime1 = startTime.plus(duration1);
+        Task task = new Task("n", "d", TaskStatus.DONE, startTime1, duration1);
+        assertFalse(man.scheduleConflict(task));
+        manager.create(task);
+        assertTrue(man.scheduleConflict(task));
     }
 
 }
