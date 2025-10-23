@@ -6,8 +6,6 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.TaskStatus;
 
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
