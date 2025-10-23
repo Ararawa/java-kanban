@@ -26,6 +26,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     TaskStatus calculateStatus(Epic epic) {
+        TaskStatus was = epic.status;
+        if (epic.getEpicSubtasks().isEmpty()) {
+            return was;
+        }
         int inProgress = 0;
         int done = 0;
         int news = 0;
@@ -34,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
                 inProgress++;
             } else if (subtasks.get(i).status == TaskStatus.DONE) {
                 done++;
-            } else if (subtasks.get(i).status == TaskStatus.DONE) {
+            } else if (subtasks.get(i).status == TaskStatus.NEW) {
                 news++;
             }
         }
@@ -159,8 +163,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void update(Task task) {
         if (scheduleConflict(task)) {
-            System.out.println("Schedule conflict in update!");
-            return;
+            Task inter = getByID(task.id);
+            boolean ok = inter.id == task.id && inter.startTime.equals(task.startTime) &&
+                    inter.duration.equals(task.duration);
+            if (!ok) {
+                System.out.println("Schedule conflict in update!");
+                return;
+            }
         }
         if (task instanceof Epic) {
             epics.get(task.id).description = task.description;
