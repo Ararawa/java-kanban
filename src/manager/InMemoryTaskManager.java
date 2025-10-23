@@ -265,7 +265,7 @@ public class InMemoryTaskManager implements TaskManager {
                         boolean b = (task.startTime.plus(task.duration).isBefore(task1.startTime)) ||
                                 (task.startTime.isAfter(task1.startTime.plus(task1.duration)));
                         return !b;
-                    } );
+                    });
         } else {
             conflict = prioritizedTasks
                     .stream()
@@ -273,7 +273,7 @@ public class InMemoryTaskManager implements TaskManager {
                         boolean b = (task.startTime.plus(task.duration).isBefore(task1.startTime)) ||
                                 (task.startTime.isAfter(task1.startTime.plus(task1.duration)));
                         return !b;
-                    } );
+                    });
         }
         return conflict;
     }
