@@ -65,7 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
                     .stream()
                     .map(i -> subtasks.get(i).getEndTime())
                     .filter(Objects::nonNull)
-                    .min(LocalDateTime::compareTo)
+                    .max(LocalDateTime::compareTo)
                     .orElse(subtasks.get(epic.getEpicSubtasks().getFirst()).getEndTime());
         }
         return null;
@@ -181,6 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(((Subtask) task).epicID).startTime = calculateEpicStart(epics.get(((Subtask) task).epicID));
             epics.get(((Subtask) task).epicID).endTime = calculateEpicEnd(epics.get(((Subtask) task).epicID));
             epics.get(((Subtask) task).epicID).duration = calculateEpicDuration(epics.get(((Subtask) task).epicID));
+            setPriority(epics.get(((Subtask) task).epicID));
         } else if (task != null) {
             tasks.get(task.id).description = task.description;
             tasks.get(task.id).status = task.status;
@@ -234,7 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (prioritizedTasks.isEmpty()) {
             return new ArrayList<>();
         }
-        return (ArrayList<Task>) prioritizedTasks.stream().toList();
+        return new ArrayList<>(prioritizedTasks);
 
     }
 
@@ -245,21 +246,25 @@ public class InMemoryTaskManager implements TaskManager {
         prioritizedTasks.add(task);
     }
 
-    public boolean checkForCrossing(Task task1, Task task2) {
-        return task1.startTime.plus(task1.duration).isAfter(task2.startTime);
-    }
-
     public boolean scheduleConflict(Task task) {
         boolean conflict = false;
         if (task instanceof Subtask) {
             conflict = prioritizedTasks
                     .stream()
                     .filter(task1 -> !(task1 instanceof Epic))
-                    .anyMatch(task1 -> task1.startTime.plus(task1.duration).isAfter(task.startTime));
+                    .anyMatch(task1 -> {
+                        boolean b = (task.startTime.plus(task.duration).isBefore(task1.startTime)) ||
+                                (task.startTime.isAfter(task1.startTime.plus(task1.duration)));
+                        return !b;
+                    } );
         } else {
             conflict = prioritizedTasks
                     .stream()
-                    .anyMatch(task1 -> task1.startTime.plus(task1.duration).isAfter(task.startTime));
+                    .anyMatch(task1 -> {
+                        boolean b = (task.startTime.plus(task.duration).isBefore(task1.startTime)) ||
+                                (task.startTime.isAfter(task1.startTime.plus(task1.duration)));
+                        return !b;
+                    } );
         }
         return conflict;
     }

@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -220,6 +221,77 @@ abstract class TaskManagerTest<T extends TaskManager> {
             System.out.println(task);
         }
         System.out.println("---\n---\n---");
+    }
+
+    @Test
+    void calculateEpicStart() {
+        Duration duration1 = Duration.ofMinutes(400);
+        for (Task i : manager.getAllTasks()) {
+            manager.getByID(i.id);
+        }
+        LocalDateTime startTime1 = manager.getByID(4).getStartTime().plus(duration1);
+        Subtask subtask3 = new Subtask("name4", "calcEpic", TaskStatus.NEW,
+                3, startTime1, duration);
+        subtask3.id = 4;
+        manager.update(subtask3);
+        assertEquals(startTime1, manager.getByID(4).getStartTime());
+        assertEquals(startTime1, manager.getByID(3).getStartTime());
+        for (Task i : manager.getAllTasks()) {
+            manager.getByID(i.id);
+        }
+    }
+
+    @Test
+    void calculateEpicEnd() {
+        LocalDateTime startTime1 = manager.getByID(7).getEndTime().plus(duration).plus(duration);
+        Subtask subtask4 = new Subtask("name8", "1", TaskStatus.NEW,
+                5, startTime1, duration);
+        subtask4.id = 6;
+        manager.update(subtask4);
+        assertEquals(startTime1.plus(duration), manager.getByID(5).getEndTime());
+        assertEquals(startTime1.plus(duration), manager.getByID(6).getEndTime());
+        for (Task i : manager.getAllTasks()) {
+            manager.getByID(i.id);
+        }
+    }
+
+    @Test
+    void calculateEpicDuration() {
+        Duration duration1 = Duration.ofMinutes(-800);
+        LocalDateTime st1 = manager.getByID(5).getStartTime();
+        LocalDateTime end1 = manager.getByID(5).getEndTime();
+        LocalDateTime startTime1 = manager.getByID(7).getStartTime().plus(duration1).plus(duration1);
+        Subtask subtask3 = new Subtask("name7", "description1", TaskStatus.NEW,
+                5, startTime1, duration);
+        subtask3.id = 7;
+        manager.update(subtask3);
+        assertEquals(startTime1, manager.getByID(7).getStartTime());
+        assertEquals(startTime1, manager.getByID(5).getStartTime());
+        Duration d1 = Duration.between(startTime1, end1).minus(duration).minus(duration);
+        assertEquals(d1, manager.getByID(5).duration);
+    }
+
+    @Test
+    void getPrioritizedTasks() {
+        InMemoryTaskManager man;
+        man = (InMemoryTaskManager) manager;
+        Duration duration1 = Duration.ofMinutes(400);
+        LocalDateTime startTime1 = manager.getByID(4).getStartTime().plus(duration1);
+        Subtask subtask3 = new Subtask("name4", "calcEpic", TaskStatus.NEW,
+                3, startTime1, duration);
+        subtask3.id = 4;
+        manager.update(subtask3);
+        ArrayList<Task> test1 = man.getPrioritizedTasks();
+        test1.forEach(System.out::println);
+        assertTrue(test1.get(1).startTime.isAfter(test1.get(0).getEndTime()));
+    }
+
+    @Test
+    void setPriority() {
+    }
+
+    @Test
+    void scheduleConflict() {
     }
 
 }

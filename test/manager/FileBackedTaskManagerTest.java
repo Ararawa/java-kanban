@@ -27,6 +27,11 @@ class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
         super.setUp();
     }
 
+    @AfterEach @Override
+    void cleanUp() {
+        super.cleanUp();
+    }
+
     static String filename = "TestFBTM";
     static String suffix = ".csv";
     static Path path;

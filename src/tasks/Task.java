@@ -77,6 +77,8 @@ public class Task implements Comparable<Task> {
                 ", id=" + id +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", duration= " + duration +
+                ", startTime= " + startTime +
                 '}';
     }
 }
