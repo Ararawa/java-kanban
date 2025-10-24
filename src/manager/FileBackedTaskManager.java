@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -18,7 +19,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         return super.getAllTasks();
     }
 
@@ -52,12 +53,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public ArrayList<Subtask> getSubtasksByEpicID(int epicID) {
+    public List<Subtask> getSubtasksByEpicID(int epicID) {
         return super.getSubtasksByEpicID(epicID);
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return super.getHistory();
     }
 
@@ -65,7 +66,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (FileWriter writer = new FileWriter(file.getName(), StandardCharsets.UTF_8)) {
             String headLine = "id,type,name,status,description,startTime,duration,epic";
 //            System.out.println("--- allTasks ---");
-            ArrayList<Task> allTasks = getAllTasks();
+            ArrayList<Task> allTasks = (ArrayList<Task>) getAllTasks();
 //            allTasks.forEach(System.out::println);
             writer.write(headLine + "\n");
             for (Task task : allTasks) {

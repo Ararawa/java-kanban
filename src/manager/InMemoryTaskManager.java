@@ -84,7 +84,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         ArrayList<Task> allTasks = new ArrayList<>(tasks.values());
         for (int i : epics.keySet()) {
             allTasks.add(epics.get(i));
@@ -228,7 +228,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Subtask> getSubtasksByEpicID(int epicID) {
+    public List<Subtask> getSubtasksByEpicID(int epicID) {
         return new ArrayList<>(subtasks.values()
                 .stream()
                 .filter(subtask -> (subtask.epicID == epicID))
@@ -236,11 +236,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return (ArrayList<Task>) historyManager.getHistory();
     }
 
-    public ArrayList<Task> getPrioritizedTasks() {
+    public List<Task> getPrioritizedTasks() {
         if (prioritizedTasks.isEmpty()) {
             return new ArrayList<>();
         }

@@ -280,7 +280,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 3, startTime1, duration);
         subtask3.id = 4;
         manager.update(subtask3);
-        ArrayList<Task> test1 = man.getPrioritizedTasks();
+        ArrayList<Task> test1 = (ArrayList<Task>) man.getPrioritizedTasks();
         test1.forEach(System.out::println);
         assertTrue(test1.get(1).startTime.isAfter(test1.get(0).getEndTime()));
     }
