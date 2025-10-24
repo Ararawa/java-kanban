@@ -138,6 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.endTime = calculateEpicEnd(epic);
             epic.duration = calculateEpicDuration(epic);
             epics.put(epic.id, epic);
+            setPriority(epic);
         } else if (task instanceof Subtask) {
             Subtask subtask = new Subtask(task.name, task.description, task.status, ((Subtask) task).epicID,
                     task.startTime, task.duration);
@@ -150,12 +151,11 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(subtask.epicID).startTime = calculateEpicStart(epics.get(subtask.epicID));
             epics.get(subtask.epicID).endTime = calculateEpicEnd(epics.get(subtask.epicID));
             epics.get(subtask.epicID).duration = calculateEpicDuration(epics.get(subtask.epicID));
+            setPriority(subtask);
         } else if (task != null) {
             Task task1 = new Task(task.name, task.description, task.status, task.startTime, task.duration);
             task1.setId(generateNumber());
             tasks.put(task1.id, task1);
-        }
-        if (task != null) {
             setPriority(task);
         }
     }
@@ -179,6 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(task.id).startTime = calculateEpicStart(epics.get(task.id));
             epics.get(task.id).endTime = calculateEpicEnd(epics.get(task.id));
             epics.get(task.id).duration = calculateEpicDuration(epics.get(task.id));
+            setPriority(epics.get(task.id));
         } else if (task instanceof Subtask) {
             subtasks.get(task.id).description = task.description;
             subtasks.get(task.id).status = task.status;
@@ -191,15 +192,14 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(((Subtask) task).epicID).endTime = calculateEpicEnd(epics.get(((Subtask) task).epicID));
             epics.get(((Subtask) task).epicID).duration = calculateEpicDuration(epics.get(((Subtask) task).epicID));
             setPriority(epics.get(((Subtask) task).epicID));
+            setPriority(subtasks.get(task.id));
         } else if (task != null) {
             tasks.get(task.id).description = task.description;
             tasks.get(task.id).status = task.status;
             tasks.get(task.id).name = task.name;
             tasks.get(task.id).startTime = task.startTime;
             tasks.get(task.id).duration = task.duration;
-        }
-        if (task != null) {
-            setPriority(task);
+            setPriority(tasks.get(task.id));
         }
     }
 
