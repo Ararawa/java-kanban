@@ -62,6 +62,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return super.getHistory();
     }
 
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return super.getPrioritizedTasks();
+    }
+
     public void save() {
         try (FileWriter writer = new FileWriter(file.getName(), StandardCharsets.UTF_8)) {
             String headLine = "id,type,name,status,description,startTime,duration,epic";
