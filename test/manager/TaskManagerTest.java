@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -150,7 +151,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void getSubtasksByEpicID() {
         Task test1 = manager.getByID(6);
         Task test2 = manager.getByID(7);
-        ArrayList<Subtask> test3 = (ArrayList<Subtask>) manager.getSubtasksByEpicID(5);
+        List<Subtask> test3 = manager.getSubtasksByEpicID(5);
         assertEquals(test1, test3.getFirst());
         assertEquals(test2, test3.get(1));
     }
@@ -193,33 +194,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getHistory() {
-        assertEquals(manager.getByID(2), manager.getHistory().getLast());
-        ArrayList<Task> test2 = (ArrayList<Task>) manager.getHistory();
-        for (Task task : test2) {
-            System.out.println(task);
-        }
-        System.out.println("---\n---\n---");
+        manager.deleteAllTasks();
         startTime = startTime.plus(duration).plus(duration);
-        Task test1 = new Task("name", "descr777", TaskStatus.NEW, startTime, duration);
-        String testdescr1 = test1.description;
-        test1.setId(20);
-        manager.create(test1);
-        ArrayList<Task> arara = (ArrayList<Task>) manager.getAllTasks();
-        int testnumber = 0;
-        for (Task task : arara) {
-            if (task.description.equals(testdescr1))
-                testnumber = task.id;
-        }
+        Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
+        manager.create(task1);
         startTime = startTime.plus(duration).plus(duration);
-        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE, startTime, duration);
-        test3.setId(testnumber);
-        manager.update(test3);
-        assertEquals(manager.getByID(testnumber), manager.getHistory().getLast());
-        ArrayList<Task> test4 = (ArrayList<Task>) manager.getHistory();
-        for (Task task : test4) {
-            System.out.println(task);
-        }
-        System.out.println("---\n---\n---");
+        Task task2 = new Task("name2", "description1", TaskStatus.NEW, startTime, duration);
+        manager.create(task2);
+        assertEquals(manager.getByID(8), manager.getHistory().getLast());
+        assertEquals(manager.getByID(9), manager.getHistory().getLast());
     }
 
     @Test
