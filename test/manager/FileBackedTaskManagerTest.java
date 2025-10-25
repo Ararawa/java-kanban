@@ -21,13 +21,15 @@ class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
         return Managers.getFileManipulator(file);
     }
 
-    @BeforeEach @Override
+    @BeforeEach
+    @Override
     void setUp() {
         manager = createManager();
         super.setUp();
     }
 
-    @AfterEach @Override
+    @AfterEach
+    @Override
     void cleanUp() {
         super.cleanUp();
     }
@@ -64,7 +66,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(
                 new FileInputStream(Paths.get(file.getName()).toFile()), StandardCharsets.UTF_8))) {
             br.readLine();
-            for (Task task: test1) {
+            for (Task task : test1) {
                 String line = br.readLine();
                 String type;
                 String epicID = "";

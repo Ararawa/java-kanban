@@ -15,10 +15,11 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
         return Managers.getDefault();
     }
 
-    @BeforeEach @Override
+    @BeforeEach
+    @Override
     void setUp() {
-       manager = createManager();
-       super.setUp();
+        manager = createManager();
+        super.setUp();
     }
 
     @Test

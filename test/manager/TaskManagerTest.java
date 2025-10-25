@@ -170,7 +170,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
             }
         }
         startTime = startTime.plus(duration).plus(duration);
-        Task test3 =  new Epic("wrong", "description1", TaskStatus.NEW, startTime, duration);
+        Task test3 = new Epic("wrong", "description1", TaskStatus.NEW, startTime, duration);
         String testname2 = test3.name;
         test3.setId(6);
         manager.create(test3);

@@ -3,6 +3,7 @@ package tasks;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
     public Epic(String name, String description, TaskStatus status) {
@@ -29,7 +30,7 @@ public class Epic extends Task {
         return endTime;
     }
 
-    public ArrayList<Integer> getEpicSubtasks() {
+    public List<Integer> getEpicSubtasks() {
         return epicSubtasks;
     }
 
