@@ -252,9 +252,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void setPriority(Task task) {
-        if (task.startTime == null) {
-            return;
-        }
+//        if (task.startTime == null) {
+//            return;
+//        }
         prioritizedTasks.add(task);
     }
 

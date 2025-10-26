@@ -49,6 +49,9 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task other) {
+        if (other.startTime == null) {
+            return 0;
+        }
         if (this.getStartTime().isEqual(other.getStartTime())) {
             if (this instanceof Epic && other instanceof Subtask) {
                 return -1;
