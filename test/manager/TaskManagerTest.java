@@ -239,18 +239,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void calculateEpicDuration() {
-        Duration duration1 = Duration.ofMinutes(-800);
-        LocalDateTime st1 = manager.getByID(5).getStartTime();
-        LocalDateTime end1 = manager.getByID(5).getEndTime();
-        LocalDateTime startTime1 = manager.getByID(7).getStartTime().plus(duration1).plus(duration1);
-        Subtask subtask3 = new Subtask("name7", "description1", TaskStatus.NEW,
-                5, startTime1, duration);
-        subtask3.id = 7;
-        manager.update(subtask3);
-        assertEquals(startTime1, manager.getByID(7).getStartTime());
-        assertEquals(startTime1, manager.getByID(5).getStartTime());
-        Duration d1 = Duration.between(startTime1, end1).minus(duration).minus(duration);
-        assertEquals(d1, manager.getByID(5).duration);
+        Duration duration1 = manager.getByID(6).duration.plus(manager.getByID(7).duration);
+        Duration duration2 = manager.getByID(5).duration;
+        assertEquals(duration1, duration2);
     }
 
     @Test

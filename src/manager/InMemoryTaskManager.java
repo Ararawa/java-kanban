@@ -76,12 +76,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     Duration calculateEpicDuration(Epic epic) {
-        if (epic.startTime != null) {
-            return Duration.between(epic.startTime, epic.getEndTime());
+        if (!epic.getEpicSubtasks().isEmpty()) {
+            Duration duration = Duration.ofMinutes(0);
+            for (Subtask subtask : getSubtasksByEpicID(epic.id)) {
+                duration = duration.plus(subtask.duration);
+            }
+            return duration;
         }
         return null;
     }
-
 
     @Override
     public List<Task> getAllTasks() {
@@ -262,16 +265,16 @@ public class InMemoryTaskManager implements TaskManager {
                     .stream()
                     .filter(task1 -> !(task1 instanceof Epic))
                     .anyMatch(task1 -> {
-                        boolean b = (task.startTime.plus(task.duration).isBefore(task1.startTime)) ||
-                                (task.startTime.isAfter(task1.startTime.plus(task1.duration)));
+                        boolean b = (task.getEndTime().isBefore(task1.startTime)) ||
+                                (task.startTime.isAfter(task1.getEndTime()));
                         return !b;
                     });
         } else {
             conflict = prioritizedTasks
                     .stream()
                     .anyMatch(task1 -> {
-                        boolean b = (task.startTime.plus(task.duration).isBefore(task1.startTime)) ||
-                                (task.startTime.isAfter(task1.startTime.plus(task1.duration)));
+                        boolean b = (task.getEndTime().isBefore(task1.startTime)) ||
+                                (task.startTime.isAfter(task1.getEndTime()));
                         return !b;
                     });
         }
