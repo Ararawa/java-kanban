@@ -10,11 +10,7 @@ public class Epic extends Task {
         super(name, description, status);
     }
 
-    public Epic(String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration) {
-        super(name, description, status, startTime, duration);
-    }
-
-    private ArrayList<Integer> epicSubtasks = new ArrayList<>();
+    private List<Integer> epicSubtasks = new ArrayList<>();
 
     public LocalDateTime endTime;
 
@@ -34,7 +30,7 @@ public class Epic extends Task {
         return epicSubtasks;
     }
 
-    public void setEpicSubtasks(ArrayList<Integer> epicSubtasks) {
+    public void setEpicSubtasks(List<Integer> epicSubtasks) {
         this.epicSubtasks = epicSubtasks;
     }
 }

@@ -38,14 +38,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task task2 = new Task("name2", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task2);
         startTime = startTime.plus(duration).plus(duration);
-        Epic epic1 = new Epic("name3", "description1", TaskStatus.NEW, startTime, duration);
+        Epic epic1 = new Epic("name3", "description1", TaskStatus.NEW);
         manager.create(epic1);
         startTime = startTime.plus(duration).plus(duration);
         Subtask subtask1 = new Subtask("name4", "description1", TaskStatus.DONE, 3,
                 startTime, duration);
         manager.create(subtask1);
         startTime = startTime.plus(duration).plus(duration);
-        Epic epic2 = new Epic("name5", "description1", TaskStatus.NEW, startTime, duration);
+        Epic epic2 = new Epic("name5", "description1", TaskStatus.NEW);
         manager.create(epic2);
         startTime = startTime.plus(duration).plus(duration);
         Subtask subtask2 = new Subtask("name6", "description1", TaskStatus.IN_PROGRESS,
@@ -159,7 +159,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void epicInsideEpic() {
         startTime = startTime.plus(duration).plus(duration);
-        Task test1 = new Epic("yammy", "description1", TaskStatus.NEW, startTime, duration);
+        Task test1 = new Epic("yammy", "description1", TaskStatus.NEW);
         String testname1 = test1.name;
         manager.create(test1);
         ArrayList<Task> test2 = (ArrayList<Task>) manager.getAllTasks();
@@ -170,7 +170,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
             }
         }
         startTime = startTime.plus(duration).plus(duration);
-        Task test3 = new Epic("wrong", "description1", TaskStatus.NEW, startTime, duration);
+        Task test3 = new Epic("wrong", "description1", TaskStatus.NEW);
         String testname2 = test3.name;
         test3.setId(6);
         manager.create(test3);

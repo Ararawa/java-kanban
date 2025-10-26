@@ -145,7 +145,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             duration = Duration.ofMinutes(Long.parseLong(split[6]));
         }
         if (split[1].equals(String.valueOf(TaskType.EPIC))) {
-            task = new Epic(split[2], split[4], status, startTime, duration);
+            task = new Epic(split[2], split[4], status);
         } else if (split[1].equals(String.valueOf(TaskType.SUBTASK))) {
             task = new Subtask(split[2], split[4], status, Integer.parseInt(split[7]), startTime, duration);
         } else if (split[1].equals(String.valueOf(TaskType.TASK))) {
