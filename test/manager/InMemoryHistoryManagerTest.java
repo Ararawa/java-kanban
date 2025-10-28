@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,13 +16,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryHistoryManagerTest {
 
     TaskManager manager;
+    static LocalDateTime startTime = LocalDateTime
+            .parse("2022/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+    static Duration duration = Duration.ofMinutes(5);
 
     @BeforeEach
     void setUp() {
         manager = Managers.getDefault();
-        Task task1 = new Task("name1", "description1", TaskStatus.NEW);
+        startTime = startTime.plus(duration).plus(duration);
+        Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task1);
-        Task task2 = new Task("name2", "description2", TaskStatus.NEW);
+        startTime = startTime.plus(duration).plus(duration);
+        Task task2 = new Task("name2", "description2", TaskStatus.NEW, startTime, duration);
         manager.create(task2);
     }
 
@@ -30,6 +38,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void add() {
+        assertTrue(manager.getHistory().isEmpty());
         System.out.println(manager.getByID(2));
         manager.getByID(1);
         manager.getByID(2);
@@ -49,7 +58,8 @@ class InMemoryHistoryManagerTest {
     @Test
     void remove() {
         System.out.println("---\nremove\n---");
-        Task task3 = new Task("name3", "description3", TaskStatus.NEW);
+        startTime = startTime.plus(duration).plus(duration);
+        Task task3 = new Task("name3", "description3", TaskStatus.NEW, startTime, duration);
         manager.create(task3);
         System.out.println(manager.getByID(3));
         manager.getByID(2);
@@ -77,7 +87,8 @@ class InMemoryHistoryManagerTest {
             System.out.println(task);
         }
         System.out.println("---\n---\n---");
-        Task test1 = new Task("name", "descr777", TaskStatus.NEW);
+        startTime = startTime.plus(duration).plus(duration);
+        Task test1 = new Task("name", "descr777", TaskStatus.NEW, startTime, duration);
         String testdescr1 = test1.description;
         manager.create(test1);
         ArrayList<Task> arara = (ArrayList<Task>) manager.getAllTasks();
@@ -86,7 +97,8 @@ class InMemoryHistoryManagerTest {
             if (task.description.equals(testdescr1))
                 testnumber = task.id;
         }
-        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE);
+        startTime = startTime.plus(duration).plus(duration);
+        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE, startTime, duration);
         manager.create(test3);
         assertEquals(manager.getByID(testnumber), manager.getHistory().getLast());
         ArrayList<Task> test4 = (ArrayList<Task>) manager.getHistory();

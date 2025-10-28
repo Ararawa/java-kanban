@@ -1,186 +1,90 @@
 package manager;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
-import tasks.Task;
 import tasks.TaskStatus;
 
-import java.util.ArrayList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.jupiter.api.Assertions.*;
-class InMemoryTaskManagerTest {
+class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
-    TaskManager manager;
+    @Override
+    TaskManager createManager() {
+        return Managers.getDefault();
+    }
 
     @BeforeEach
+    @Override
     void setUp() {
-        manager = Managers.getDefault();
-        Task task1 = new Task("name1", "description1", TaskStatus.NEW);
-        manager.create(task1);
-        Task task2 = new Task("name2", "description1", TaskStatus.NEW);
-        manager.create(task2);
-        Epic epic1 = new Epic("name3", "description1", TaskStatus.NEW);
-        manager.create(epic1);
-        Subtask subtask1 = new Subtask("name4", "description1", TaskStatus.DONE, 3);
+        manager = createManager();
+        super.setUp();
+    }
+
+    @Test
+    void statusEpicAllVariations() {
+        startTime = startTime.plus(duration).plus(duration);
+        Epic epic = new Epic("n", "d", TaskStatus.NEW);
+        manager.create(epic);
+        startTime = startTime.plus(duration).plus(duration);
+        Subtask subtask1 = new Subtask("n1", "d1", TaskStatus.NEW, 8, startTime, duration);
+        subtask1.setId(9);
         manager.create(subtask1);
-        Epic epic2 = new Epic("name5", "description1", TaskStatus.NEW);
-        manager.create(epic2);
-        Subtask subtask2 = new Subtask("name6", "description1", TaskStatus.IN_PROGRESS, 5);
+        startTime = startTime.plus(duration).plus(duration);
+        Subtask subtask2 = new Subtask("n2", "d2", TaskStatus.NEW, 8, startTime, duration);
+        subtask2.setId(10);
         manager.create(subtask2);
-        Subtask subtask3 = new Subtask("name7", "description1", TaskStatus.NEW, 5);
-        manager.create(subtask3);
-    }
+        assertEquals(TaskStatus.NEW, manager.getByID(8).status);
 
-    @AfterEach
-    void cleanUp() {
-        manager.deleteAllTasks();
-    }
-
-    @Test
-    void calculateStatus() {
-        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(5).status);
-        Subtask test1 = new Subtask("name6", "description1", TaskStatus.DONE, 5);
-        test1.setId(6);
-        manager.update(test1);
-        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(5).status);
-        Subtask test2 = new Subtask("name7", "description1", TaskStatus.IN_PROGRESS, 5);
-        test2.setId(7);
-        manager.update(test2);
-        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(5).status);
-        Subtask test3 = new Subtask("name7", "description1", TaskStatus.DONE, 5);
-        test3.setId(7);
-        manager.update(test3);
-        assertEquals(TaskStatus.DONE, manager.getByID(5).status);
-        Subtask test4 = new Subtask("name6", "description1", TaskStatus.NEW, 5);
-        test4.setId(6);
-        manager.update(test4);
-        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(5).status);
-    }
-
-    @Test
-    void getAllTasks() {
-        ArrayList<Task> test1 = (ArrayList<Task>) manager.getAllTasks();
-        for (Task task : test1) {
-            assertEquals(manager.getByID(task.id), task);
-        }
-    }
-
-    @Test
-    void deleteAllTasks() {
-        manager.deleteAllTasks();
-        assertTrue(manager.getAllTasks().isEmpty());
-    }
-
-    @Test
-    void getByID() {
-        Task test1 = new Task("name1", "description1", TaskStatus.NEW);
-        test1.id = 1;
-        Task test2 = manager.getByID(1);
-        assertEquals(test1, test2);
-    }
-
-    @Test
-    void create() {
-        Task test1 = new Task("test1", "test1desc", TaskStatus.DONE);
-        manager.create(test1);
-        assertNotNull(manager.getByID(8));
-        assertEquals(8, manager.getByID(8).id);
-        assertEquals("test1", manager.getByID(8).name);
-        assertEquals("test1desc", manager.getByID(8).description);
+        subtask1.status = TaskStatus.DONE;
+        subtask2.status = TaskStatus.DONE;
+        manager.update(subtask1);
+        manager.update(subtask2);
         assertEquals(TaskStatus.DONE, manager.getByID(8).status);
-    }
 
-    @Test
-    void update() {
-        Task test1 = manager.getByID(6);
-        Subtask subtask4 = new Subtask("n7", "destion1", TaskStatus.DONE, 5);
-        subtask4.setId(6);
-        manager.update(subtask4);
-        Task test2 = manager.getByID(6);
-        assertEquals(test1, test2);
-    }
+        subtask1.status = TaskStatus.NEW;
+        subtask2.status = TaskStatus.DONE;
+        manager.update(subtask1);
+        manager.update(subtask2);
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(8).status);
 
-    @Test
-    void deleteByID() {
-        Task test1 = manager.getByID(1);
-        manager.deleteByID(1);
-        Task test2 = manager.getByID(1);
-        assertNotEquals(test1, test2);
-        assertNull(test2);
-    }
+        subtask1.status = TaskStatus.DONE;
+        subtask2.status = TaskStatus.NEW;
+        manager.update(subtask1);
+        manager.update(subtask2);
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(8).status);
 
-    @Test
-    void getSubtasksByEpicID() {
-        Task test1 = manager.getByID(6);
-        Task test2 = manager.getByID(7);
-        ArrayList<Subtask> test3 = (ArrayList<Subtask>) manager.getSubtasksByEpicID(5);
-        assertEquals(test1, test3.getFirst());
-        assertEquals(test2, test3.get(1));
-    }
+        subtask1.status = TaskStatus.NEW;
+        subtask2.status = TaskStatus.IN_PROGRESS;
+        manager.update(subtask1);
+        manager.update(subtask2);
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(8).status);
 
-    @Test
-    void epicInsideEpic() {
-        Task test1 = new Epic("yammy", "description1", TaskStatus.NEW);
-        String testname1 = test1.name;
-        manager.create(test1);
-        ArrayList<Task> test2 = (ArrayList<Task>) manager.getAllTasks();
-        for (Task task : test2) {
-            if (task.name.equals(testname1)) {
-                assertFalse(task instanceof Subtask);
-                assertInstanceOf(Epic.class, task);
-            }
-        }
-        Task test3 =  new Epic("wrong", "description1", TaskStatus.NEW);
-        String testname2 = test3.name;
-        test3.setId(6);
-        manager.create(test3);
-        ArrayList<Task> test4 = (ArrayList<Task>) manager.getAllTasks();
-        for (Task task : test4) {
-            if (task.name.equals(testname2)) {
-                assertFalse(task instanceof Subtask);
-                assertInstanceOf(Epic.class, task);
-            }
-        }
-    }
+        subtask1.status = TaskStatus.DONE;
+        subtask2.status = TaskStatus.IN_PROGRESS;
+        manager.update(subtask1);
+        manager.update(subtask2);
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(8).status);
 
-    @Test
-    void subtaskToEpic() {
-        Task test1 = manager.getByID(4);
-        test1.setId(3);
-        assertInstanceOf(Subtask.class, test1);
-        assertFalse(test1 instanceof Epic);
-        System.out.println(manager.getByID(3));
-    }
+        subtask1.status = TaskStatus.IN_PROGRESS;
+        subtask2.status = TaskStatus.NEW;
+        manager.update(subtask1);
+        manager.update(subtask2);
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(8).status);
 
-    @Test
-    void getHistory() {
-        assertEquals(manager.getByID(2), manager.getHistory().getLast());
-        ArrayList<Task> test2 = (ArrayList<Task>) manager.getHistory();
-        for (Task task : test2) {
-            System.out.println(task);
-        }
-        System.out.println("---\n---\n---");
-        Task test1 = new Task("name", "descr777", TaskStatus.NEW);
-        String testdescr1 = test1.description;
-        test1.setId(20);
-        manager.create(test1);
-        ArrayList<Task> arara = (ArrayList<Task>) manager.getAllTasks();
-        int testnumber = 0;
-        for (Task task : arara) {
-            if (task.description.equals(testdescr1))
-                testnumber = task.id;
-        }
-        Task test3 = new Task("ololo", "trololo", TaskStatus.DONE);
-        test3.setId(testnumber);
-        manager.update(test3);
-        assertEquals(manager.getByID(testnumber), manager.getHistory().getLast());
-        ArrayList<Task> test4 = (ArrayList<Task>) manager.getHistory();
-        for (Task task : test4) {
-            System.out.println(task);
-        }
-        System.out.println("---\n---\n---");
+        subtask1.status = TaskStatus.IN_PROGRESS;
+        subtask2.status = TaskStatus.DONE;
+        manager.update(subtask1);
+        manager.update(subtask2);
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(8).status);
+
+        subtask1.status = TaskStatus.IN_PROGRESS;
+        subtask2.status = TaskStatus.IN_PROGRESS;
+        manager.update(subtask1);
+        manager.update(subtask2);
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getByID(8).status);
+
+
     }
 }

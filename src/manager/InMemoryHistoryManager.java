@@ -38,8 +38,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
-        return (ArrayList<Task>) getTasks();
+    public List<Task> getHistory() {
+        return getTasks();
     }
 
     public void removeNode(Node node) {
