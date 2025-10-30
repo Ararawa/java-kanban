@@ -154,4 +154,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         task.id = Integer.parseInt(split[0]);
         return task;
     }
+
+    public ArrayList<Task> getTasks() {
+        return super.getTasks();
+    }
+
+    public ArrayList<Subtask> getSubtasks() {
+        return super.getSubtasks();
+    }
+
+    public ArrayList<Epic> getEpics() {
+        return super.getEpics();
+    }
 }
