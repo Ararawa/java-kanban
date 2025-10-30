@@ -1,5 +1,6 @@
 package manager;
 
+import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
@@ -24,4 +25,10 @@ public interface TaskManager {
     List<Task> getHistory();
 
     List<Task> getPrioritizedTasks();
+
+    List<Task> getTasks();
+
+    List<Subtask> getSubtasks();
+
+    List<Epic> getEpics();
 }
