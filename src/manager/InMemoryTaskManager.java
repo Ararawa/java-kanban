@@ -127,7 +127,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void create(Task task) {
+    public boolean create(Task task) {
         if (task instanceof Epic) {
             Epic epic = new Epic(task.name, task.description, task.status);
             epic.setId(generateNumber());
@@ -140,7 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             if (scheduleConflict(task)) {
                 System.out.println("Schedule conflict in create!");
-                return;
+                return false;
             }
             if (task instanceof Subtask) {
                 Subtask subtask = new Subtask(task.name, task.description, task.status, ((Subtask) task).epicID,
@@ -162,17 +162,18 @@ public class InMemoryTaskManager implements TaskManager {
                 setPriority(tasks.get(task1.id));
             }
         }
+        return true;
     }
 
     @Override
-    public void update(Task task) {
+    public boolean update(Task task) {
         if (scheduleConflict(task)) {
             Task inter = getByID(task.id);
             boolean ok = inter.id == task.id && inter.startTime.equals(task.startTime) &&
                     inter.duration.equals(task.duration);
             if (!ok) {
                 System.out.println("Schedule conflict in update!");
-                return;
+                return false;
             }
         }
         if (task != null) {
@@ -204,6 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.get(task.id).duration = task.duration;
             setPriority(tasks.get(task.id));
         }
+        return true;
     }
 
     @Override
