@@ -1,6 +1,10 @@
 package http;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
@@ -113,8 +117,9 @@ public class BaseHttpHandler implements HttpHandler {
         return response;
     }
 
-//    он будет содержать общие методы для чтения и отправки данных:
-//    sendText — для отправки общего ответа в случае успеха;
-//    sendNotFound — для отправки ответа в случае, если объект не был найден;
-//    sendHasInteractions — для отправки ответа, если при создании или обновлении задача пересекается с уже существующими.
+//он будет содержать общие методы для чтения и отправки данных:
+//sendText — для отправки общего ответа в случае успеха;
+//sendNotFound — для отправки ответа в случае, если объект не был найден;
+//sendHasInteractions — для отправки ответа, если при создании или обновлении задача пересекается с уже существующими.
+//сначала надо проверить работу уже написанных, потом добавить эти; написал больше и сложнее.    
 }
