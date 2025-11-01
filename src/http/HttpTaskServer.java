@@ -15,11 +15,11 @@ public class HttpTaskServer {
         httpServer.start();
         manager = Managers.getDefault();
 
-        httpServer.createContext("/path1", new TaskHandler(manager));
-        httpServer.createContext("/path2", new SubtaskHandler(manager));
-        httpServer.createContext("/path3", new EpicHandler(manager));
-        httpServer.createContext("/path4", new HistoryHandler(manager));
-        httpServer.createContext("/path5", new PriorityHandler(manager));
+        httpServer.createContext("/tasks", new TaskHandler(manager));
+        httpServer.createContext("/subtasks", new SubtaskHandler(manager));
+        httpServer.createContext("/epics", new EpicHandler(manager));
+        httpServer.createContext("/history", new HistoryHandler(manager));
+        httpServer.createContext("/priority", new PriorityHandler(manager));
 
         httpServer.stop(5);
     }
