@@ -61,7 +61,6 @@ public class EpicHandler extends BaseHttpHandler {
 
                 Gson gson = new Gson();
                 Task task = gson.fromJson(body, Task.class);
-// for 406 если задача пересекается с существующими переделать методы create и update с void на boolean
                 if (taskId.isPresent()) {
                     System.out.println("update");
                     manager.update(task);
