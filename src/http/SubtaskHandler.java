@@ -65,14 +65,23 @@ public class SubtaskHandler extends BaseHttpHandler {
 // for 406 если задача пересекается с существующими переделать методы create и update с void на boolean
                 if (taskId.isPresent()) {
                     System.out.println("update");
-                    manager.update(task);
-                    httpExchange.sendResponseHeaders(201, 0);
+                    if (!manager.update(task)) {
+                        response = "задача пересекается с существующими";
+                        httpExchange.sendResponseHeaders(406, 0);
+                    } else {
+                        response = "Вы использовали метод POST! и update";
+                        httpExchange.sendResponseHeaders(201, 0);
+                    }
                 } else {
                     System.out.println("create");
-                    manager.create(task);
-                    httpExchange.sendResponseHeaders(201, 0);
+                    if (!manager.create(task)) {
+                        response = "задача пересекается с существующими";
+                        httpExchange.sendResponseHeaders(406, 0);
+                    } else {
+                        response = "Вы использовали метод POST! и create";
+                        httpExchange.sendResponseHeaders(201, 0);
+                    }
                 }
-                response = "Вы использовали метод POST!";
                 break;
             case "GET":
                 if (id.isPresent()) {
