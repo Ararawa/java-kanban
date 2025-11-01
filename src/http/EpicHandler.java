@@ -39,38 +39,7 @@ public class EpicHandler extends BaseHttpHandler {
         String response = "";
         switch(method) {
             case "POST":
-                List<String> contentTypeValues = httpExchange.getRequestHeaders().get("Content-type");
-                if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
-                    System.out.println("Это JSON!");
-                } else {
-                    System.out.println("Need Json to use post");
-                    break;
-                }
-                String body;
-                try (InputStream inputStream = httpExchange.getRequestBody()) {
-                    body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                }
-
-                JsonElement jsonElement = JsonParser.parseString(body);
-                if (!jsonElement.isJsonObject()) {
-                    System.out.println("!jsonElement.isJsonObject()");
-                    break;
-                }
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                Optional<Integer> taskId = Optional.of(jsonObject.get("id").getAsInt());
-
-                Gson gson = new Gson();
-                Task task = gson.fromJson(body, Task.class);
-                if (taskId.isPresent()) {
-                    System.out.println("update");
-                    manager.update(task);
-                    httpExchange.sendResponseHeaders(201, 0);
-                } else {
-                    System.out.println("create");
-                    manager.create(task);
-                    httpExchange.sendResponseHeaders(201, 0);
-                }
-                response = "Вы использовали метод POST!";
+                response = postMethod(httpExchange);
                 break;
             case "GET":
                 if (pathArray.length == 4) {

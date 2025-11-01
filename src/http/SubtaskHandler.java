@@ -40,48 +40,7 @@ public class SubtaskHandler extends BaseHttpHandler {
         String response = "";
         switch(method) {
             case "POST":
-                List<String> contentTypeValues = httpExchange.getRequestHeaders().get("Content-type");
-                if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
-                    System.out.println("Это JSON!");
-                } else {
-                    System.out.println("Need Json to use post");
-                    break;
-                }
-                String body;
-                try (InputStream inputStream = httpExchange.getRequestBody()) {
-                    body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                }
-
-                JsonElement jsonElement = JsonParser.parseString(body);
-                if (!jsonElement.isJsonObject()) {
-                    System.out.println("!jsonElement.isJsonObject()");
-                    break;
-                }
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                Optional<Integer> taskId = Optional.of(jsonObject.get("id").getAsInt());
-
-                Gson gson = new Gson();
-                Task task = gson.fromJson(body, Task.class);
-// for 406 если задача пересекается с существующими переделать методы create и update с void на boolean
-                if (taskId.isPresent()) {
-                    System.out.println("update");
-                    if (!manager.update(task)) {
-                        response = "задача пересекается с существующими";
-                        httpExchange.sendResponseHeaders(406, 0);
-                    } else {
-                        response = "Вы использовали метод POST! и update";
-                        httpExchange.sendResponseHeaders(201, 0);
-                    }
-                } else {
-                    System.out.println("create");
-                    if (!manager.create(task)) {
-                        response = "задача пересекается с существующими";
-                        httpExchange.sendResponseHeaders(406, 0);
-                    } else {
-                        response = "Вы использовали метод POST! и create";
-                        httpExchange.sendResponseHeaders(201, 0);
-                    }
-                }
+                response = postMethod(httpExchange);
                 break;
             case "GET":
                 if (id.isPresent()) {

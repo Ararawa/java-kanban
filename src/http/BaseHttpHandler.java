@@ -1,20 +1,24 @@
 package http;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
 import tasks.Task;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class BaseHttpHandler implements HttpHandler {
 
     TaskManager manager;
     String taskType;
+    String body;
+    String response;
 
     public BaseHttpHandler(TaskManager manager) {
         this.manager = manager;
@@ -61,6 +65,52 @@ public class BaseHttpHandler implements HttpHandler {
         httpExchange.getResponseHeaders().set("Content-Type", "application/json");
         httpExchange.sendResponseHeaders(200, 0);
         return jsonOut;
+    }
+
+    String postMethod(HttpExchange httpExchange) throws IOException {
+        List<String> contentTypeValues = httpExchange.getRequestHeaders().get("Content-type");
+        if ((contentTypeValues != null) && (contentTypeValues.contains("application/json"))) {
+            System.out.println("Это JSON!");
+        } else {
+            response = "Need Json to use post";
+            System.out.println(response);
+            return response;
+        }
+        try (InputStream inputStream = httpExchange.getRequestBody()) {
+            body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
+
+        JsonElement jsonElement = JsonParser.parseString(body);
+        if (!jsonElement.isJsonObject()) {
+            response = "!jsonElement.isJsonObject()";
+            System.out.println(response);
+            return response;
+        }
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        Optional<Integer> taskId = Optional.of(jsonObject.get("id").getAsInt());
+
+        Gson gson = new Gson();
+        Task task = gson.fromJson(body, Task.class);
+        if (taskId.isPresent()) {
+            System.out.println("update");
+            if (!manager.update(task)) {
+                response = "задача пересекается с существующими";
+                httpExchange.sendResponseHeaders(406, 0);
+            } else {
+                response = "Вы использовали метод POST! и update";
+                httpExchange.sendResponseHeaders(201, 0);
+            }
+        } else {
+            System.out.println("create");
+            if (!manager.create(task)) {
+                response = "задача пересекается с существующими";
+                httpExchange.sendResponseHeaders(406, 0);
+            } else {
+                response = "Вы использовали метод POST! и create";
+                httpExchange.sendResponseHeaders(201, 0);
+            }
+        }
+        return response;
     }
 
 //    он будет содержать общие методы для чтения и отправки данных:
