@@ -211,6 +211,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteByID(int id) {
         if (tasks.containsKey(id)) {
+            prioritizedTasks.remove(tasks.get(id));
             tasks.remove(id);
         } else if (subtasks.containsKey(id)) {
             int epicID = subtasks.get(id).epicID;
@@ -221,6 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(epicID).startTime = calculateEpicStart(epics.get(epicID));
             epics.get(epicID).endTime = calculateEpicEnd(epics.get(epicID));
             epics.get(epicID).duration = calculateEpicDuration(epics.get(epicID));
+            prioritizedTasks.remove(subtasks.get(id));
             subtasks.remove(id);
         } else {
             for (int i = 0; i < epics.get(id).getEpicSubtasks().size(); i++) {

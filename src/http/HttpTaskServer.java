@@ -36,7 +36,7 @@ public class HttpTaskServer {
         httpServer.createContext("/subtasks", new SubtaskHandler(manager));
         httpServer.createContext("/epics", new EpicHandler(manager));
         httpServer.createContext("/history", new HistoryHandler(manager));
-        httpServer.createContext("/priority", new PriorityHandler(manager));
+        httpServer.createContext("/prioritized", new PriorityHandler(manager));
 
         //httpServer.stop(5);
     }
