@@ -30,7 +30,6 @@ public class SubtaskHandler extends BaseHttpHandler {
                 id = Optional.empty();
             }
 
-            String response = "";
             switch (method) {
                 case "POST":
                     response = postMethod(httpExchange);

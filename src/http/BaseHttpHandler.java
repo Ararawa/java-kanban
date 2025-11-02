@@ -57,18 +57,28 @@ public class BaseHttpHandler implements HttpHandler {
 
     <T extends Task> String getAll(HttpExchange httpExchange, String taskType) throws IOException {
         System.out.println("getTasks");
+        System.out.println("taskType = " + taskType);
         List<T> tasksReturn = List.of();
-        tasksReturn = switch (taskType) {
-            case "tasks" -> (List<T>) manager.getTasks();
-            case "subtasks" -> (List<T>) manager.getSubtasks();
-            case "epics" -> (List<T>) manager.getEpics();
-            default -> tasksReturn;
-        };
+        switch (taskType) {
+            case "tasks":
+                tasksReturn = (List<T>) manager.getTasks();
+                break;
+            case "subtasks":
+                tasksReturn = (List<T>) manager.getSubtasks();
+                break;
+            case "epics":
+                tasksReturn = (List<T>) manager.getEpics();
+                break;
+        }
+        System.out.println("tasksReturn = " + tasksReturn.toString());
+        System.out.println("Gson gson1 = new GsonBuilder()");
         Gson gson1 = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();
+        System.out.println("String jsonOut = gson1.toJson(tasksReturn);");
         String jsonOut = gson1.toJson(tasksReturn);
+        System.out.println("json = " + jsonOut);
         httpExchange.getResponseHeaders().set("Content-Type", "application/json");
         httpExchange.sendResponseHeaders(200, 0);
         return jsonOut;
