@@ -8,6 +8,7 @@ import tasks.Subtask;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,7 @@ public class EpicHandler extends BaseHttpHandler {
                             GsonBuilder gb1 = new GsonBuilder();
                             Gson gson1 = gb1
                                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                                    .registerTypeAdapter(Duration.class, new DurationAdapter())
                                     .create();
                             response = gson1.toJson(epicSubtasks);
                             httpExchange.getResponseHeaders().set("Content-Type", "application/json");

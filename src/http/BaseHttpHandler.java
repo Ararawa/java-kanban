@@ -1,10 +1,6 @@
 package http;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
@@ -13,6 +9,7 @@ import tasks.Task;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,11 +39,16 @@ public class BaseHttpHandler implements HttpHandler {
             httpExchange.sendResponseHeaders(404, 0);
             return resp;
         } else {
+            System.out.println("start building");
             GsonBuilder gb1 = new GsonBuilder();
+            System.out.println("make gson");
             Gson gson1 = gb1
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                    .registerTypeAdapter(Duration.class, new DurationAdapter())
                     .create();
+            System.out.println("make json");
             String jsonOut = gson1.toJson(taskReturn);
+            System.out.println("json = " + jsonOut);
             httpExchange.getResponseHeaders().set("Content-Type", "application/json");
             httpExchange.sendResponseHeaders(200, 0);
             return jsonOut;
@@ -64,6 +66,7 @@ public class BaseHttpHandler implements HttpHandler {
         };
         Gson gson1 = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();
         String jsonOut = gson1.toJson(tasksReturn);
         httpExchange.getResponseHeaders().set("Content-Type", "application/json");
@@ -84,18 +87,45 @@ public class BaseHttpHandler implements HttpHandler {
             body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         }
 
+        System.out.println("JsonElement jsonElement = JsonParser.parseString(body);");
         JsonElement jsonElement = JsonParser.parseString(body);
         if (!jsonElement.isJsonObject()) {
-            response = "!jsonElement.isJsonObject()";
+            response = "jsonElement is NOT JsonObject()";
             System.out.println(response);
             return response;
         }
+        System.out.println("JsonObject jsonObject = jsonElement.getAsJsonObject();");
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        Optional<Integer> taskId = Optional.of(jsonObject.get("id").getAsInt());
-
-        Gson gson = new Gson();
-        Task task = gson.fromJson(body, Task.class);
-        if (taskId.isPresent()) {
+        System.out.println("jsonObject = " + jsonObject.toString());
+        System.out.println("Optional<Integer> taskId = Optional.of(jsonObject.get(\"id\").getAsInt());");
+        Optional<Integer> taskId;
+        boolean idPresent;
+        if (jsonObject.has("id")) {
+            try {
+                taskId = Optional.of(jsonObject.get("id").getAsInt());
+                idPresent = true;
+                System.out.println("Optional<Integer> taskId = " + taskId.get());
+            } catch (JsonSyntaxException e) {
+                response = "Ошибка при преобразовании поля 'id' в целое число";
+                System.out.println(response);
+                return response;
+            }
+        } else {
+            response = "В JSON отсутствует поле 'id'";
+            System.out.println(response);
+            idPresent = false;
+        }
+        System.out.println("GsonBuilder gb1 = new GsonBuilder();");
+        GsonBuilder gb1 = new GsonBuilder();
+        System.out.println("make gson");
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        System.out.println("Task task = gson.fromJson(body, Task.class);");
+        Task task = gson1.fromJson(body, Task.class);
+        System.out.println("task = " + task);
+        if (idPresent) {
             System.out.println("update");
             if (!manager.update(task)) {
                 response = "задача пересекается с существующими";

@@ -31,7 +31,6 @@ public class TaskHandler extends BaseHttpHandler {
                 id = Optional.empty();
             }
 
-            String response = "";
             switch (method) {
                 case "POST":
                     response = postMethod(httpExchange);
@@ -42,6 +41,7 @@ public class TaskHandler extends BaseHttpHandler {
                     } else {
                         response = getAll(httpExchange, pathArray[1]);
                     }
+                    System.out.println("response in case \"GET\" = " + response);
                     break;
                 case "DELETE":
                     response = "Вы использовали метод DELETE!";
@@ -61,6 +61,8 @@ public class TaskHandler extends BaseHttpHandler {
             httpExchange.sendResponseHeaders(500, 0);
             response = "Internal Server Error IOException";
         }
+
+        System.out.println("response = " + response);
 
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes(StandardCharsets.UTF_8));
