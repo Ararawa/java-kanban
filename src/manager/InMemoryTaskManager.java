@@ -299,4 +299,9 @@ public class InMemoryTaskManager implements TaskManager {
     public ArrayList<Epic> getEpics() {
         return new ArrayList<>(epics.values());
     }
+
+    @Override
+    public void clearHistory() {
+        historyManager.clearHistory();
+    }
 }

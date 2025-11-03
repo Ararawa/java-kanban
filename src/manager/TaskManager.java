@@ -31,4 +31,6 @@ public interface TaskManager {
     List<Subtask> getSubtasks();
 
     List<Epic> getEpics();
+
+    void clearHistory();
 }

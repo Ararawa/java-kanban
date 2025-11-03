@@ -86,4 +86,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return historyOut;
     }
+
+    @Override
+    public void clearHistory() {
+        history.clear();
+        historyMap.clear();
+    }
 }

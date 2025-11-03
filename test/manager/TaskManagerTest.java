@@ -195,14 +195,19 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void getHistory() {
         manager.deleteAllTasks();
+        manager.clearHistory();
         startTime = startTime.plus(duration).plus(duration);
         Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task1);
         startTime = startTime.plus(duration).plus(duration);
         Task task2 = new Task("name2", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task2);
-        assertEquals(manager.getByID(8), manager.getHistory().getLast());
-        assertEquals(manager.getByID(9), manager.getHistory().getLast());
+        Task t1 = manager.getByID(manager.getTasks().getLast().id);
+        Task t1c = manager.getHistory().getLast();
+        assertEquals(t1, t1c);
+        Task t2 = manager.getByID(manager.getTasks().getLast().id);
+        Task t2c = manager.getHistory().getLast();
+        assertEquals(t2, t2c);
     }
 
     @Test
