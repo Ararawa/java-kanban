@@ -1,8 +1,10 @@
-package http;
+package http.handlers;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import http.adaptors.DurationAdapter;
+import http.adaptors.LocalDateTimeAdapter;
 import manager.TaskManager;
 import tasks.Epic;
 import tasks.Subtask;

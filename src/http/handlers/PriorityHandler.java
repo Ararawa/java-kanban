@@ -1,7 +1,9 @@
-package http;
+package http.handlers;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
+import http.adaptors.DurationAdapter;
+import http.adaptors.LocalDateTimeAdapter;
 import manager.TaskManager;
 import tasks.Task;
 
@@ -13,9 +15,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-public class HistoryHandler extends BaseHttpHandler {
+public class PriorityHandler extends BaseHttpHandler {
 
-    public HistoryHandler(TaskManager manager) {
+    public PriorityHandler(TaskManager manager) {
         super(manager);
     }
 
@@ -26,7 +28,7 @@ public class HistoryHandler extends BaseHttpHandler {
 
         String response = "";
 
-        List<Task> result = manager.getHistory();
+        List<Task> result = manager.getPrioritizedTasks();
         Gson gson1 = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
@@ -40,4 +42,5 @@ public class HistoryHandler extends BaseHttpHandler {
             os.write(response.getBytes(StandardCharsets.UTF_8));
         }
     }
+
 }
