@@ -573,4 +573,275 @@ class HttpTaskServerTest {
             System.out.println("Exception = " + e.getMessage());
         }
     }
+
+    @Test
+    void postTaskCreate() throws IOException, InterruptedException {
+        manager.deleteAllTasks();
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(task1);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, response.statusCode());
+        List<Task> tasksFromManager = manager.getTasks();
+        assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
+        assertEquals("name1", tasksFromManager.getFirst().name, "Некорректное имя задачи");
+    }
+
+    @Test
+    void postTaskUpdate() throws IOException, InterruptedException {
+        List<Task> inter = manager.getTasks();
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Task task1 = new Task("olol", "ododo", TaskStatus.IN_PROGRESS, startTime, duration);
+        task1.setId(manager.getTasks().getFirst().id);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(task1);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, response.statusCode());
+        List<Task> tasksFromManager = manager.getTasks();
+        assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        assertEquals(inter.size(), tasksFromManager.size(), "Некорректное количество задач");
+        assertEquals(task1.name, tasksFromManager.getFirst().name, "Некорректное имя задачи");
+        assertEquals(task1.description, tasksFromManager.getFirst().description);
+        assertEquals(task1.status, tasksFromManager.getFirst().status);
+        assertEquals(task1.startTime, tasksFromManager.getFirst().startTime);
+        assertEquals(task1.duration, tasksFromManager.getFirst().duration);
+    }
+
+    @Test
+    void postTaskCreate406() throws IOException, InterruptedException {
+        manager.deleteAllTasks();
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Task task = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
+        manager.create(task);
+        Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(task1);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(406, response.statusCode());
+        String body = response.body();
+        assertEquals("задача пересекается с существующими", body);
+    }
+
+    @Test
+    void postTaskUpdate406() throws IOException, InterruptedException {
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Task task = new Task("ol", "od", TaskStatus.NEW, startTime, duration);
+        manager.create(task);
+        List<Task> inter = manager.getTasks();
+        Task task1 = new Task("olol", "ododo", TaskStatus.IN_PROGRESS, startTime, duration);
+        task1.setId(manager.getTasks().getFirst().id);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(task1);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(406, response.statusCode());
+        String body = response.body();
+        assertEquals("задача пересекается с существующими", body);
+        List<Task> tasksFromManager = manager.getTasks();
+        assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        assertEquals(inter.size(), tasksFromManager.size(), "Некорректное количество задач");
+        assertNotEquals(task1.name, tasksFromManager.getFirst().name, "Некорректное имя задачи");
+        assertNotEquals(task1.description, tasksFromManager.getFirst().description);
+        assertNotEquals(task1.status, tasksFromManager.getFirst().status);
+    }
+
+    @Test
+    void postSubtaskCreate() throws IOException, InterruptedException {
+        manager.deleteAllTasks();
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Epic epic1 = new Epic("name3", "description1", TaskStatus.NEW);
+        manager.create(epic1);
+        int epicIDTest = manager.getEpics().getFirst().id;
+        System.out.println("epicIDTest = " + epicIDTest);
+        Subtask subtask1 = new Subtask("name4", "description1", TaskStatus.DONE, epicIDTest,
+                startTime, duration);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(subtask1);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, response.statusCode());
+        List<Subtask> tasksFromManager = manager.getSubtasks();
+        assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
+        assertEquals(subtask1.name, tasksFromManager.getFirst().name, "Некорректное имя задачи");
+    }
+
+    @Test
+    void postSubtaskUpdate() throws IOException, InterruptedException {
+        List<Subtask> inter = manager.getSubtasks();
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Subtask subtask1 = new Subtask("olol", "ododo", TaskStatus.IN_PROGRESS,
+                manager.getEpics().getFirst().getID(), startTime, duration);
+        subtask1.setId(manager.getSubtasks().getFirst().id);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(subtask1);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, response.statusCode());
+        List<Subtask> tasksFromManager = manager.getSubtasks();
+        assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        assertEquals(inter.size(), tasksFromManager.size(), "Некорректное количество задач");
+        assertEquals(subtask1.name, tasksFromManager.getFirst().name, "Некорректное имя задачи");
+        assertEquals(subtask1.description, tasksFromManager.getFirst().description);
+        assertEquals(subtask1.status, tasksFromManager.getFirst().status);
+        assertEquals(subtask1.startTime, tasksFromManager.getFirst().startTime);
+        assertEquals(subtask1.duration, tasksFromManager.getFirst().duration);
+    }
+
+    @Test
+    void postSubtaskCreate404() throws IOException, InterruptedException {
+        manager.deleteAllTasks();
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Epic epic1 = new Epic("name3", "description1", TaskStatus.NEW);
+        manager.create(epic1);
+        int epicIDTest = manager.getEpics().getFirst().id;
+        Subtask subtask = new Subtask("name4", "description1", TaskStatus.DONE, epicIDTest,
+                startTime, duration);
+        manager.create(subtask);
+        Subtask subtask1 = new Subtask("name4", "description1", TaskStatus.DONE, epicIDTest,
+                startTime, duration);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(subtask1);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(406, response.statusCode());
+        String body = response.body();
+        assertEquals("задача пересекается с существующими", body);
+    }
+
+    @Test
+    void postSubtaskUpdate404() throws IOException, InterruptedException {
+        manager.deleteAllTasks();
+        LocalDateTime startTime = LocalDateTime
+                .parse("2032/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
+        Duration duration = Duration.ofMinutes(5);
+        Epic epic1 = new Epic("name3", "description1", TaskStatus.NEW);
+        manager.create(epic1);
+        int epicIDTest = manager.getEpics().getFirst().id;
+        Subtask subtask = new Subtask("name4", "description1", TaskStatus.DONE, epicIDTest,
+                startTime, duration);
+        manager.create(subtask);
+        startTime = startTime.plus(duration).plus(duration);
+        Subtask subtask1 = new Subtask("name4", "description1", TaskStatus.DONE, epicIDTest,
+                startTime, duration);
+        manager.create(subtask1);
+        Subtask subtask2 = new Subtask("name4", "description1", TaskStatus.DONE, epicIDTest,
+                startTime, duration);
+        subtask2.setId(manager.getSubtasks().getFirst().id);
+        GsonBuilder gb1 = new GsonBuilder();
+        Gson gson1 = gb1
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        String taskJson1 = gson1.toJson(subtask2);
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson1))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(406, response.statusCode());
+        String body = response.body();
+        assertEquals("задача пересекается с существующими", body);
+    }
+
 }

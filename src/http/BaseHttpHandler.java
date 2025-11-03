@@ -4,6 +4,8 @@ import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
+import tasks.Epic;
+import tasks.Subtask;
 import tasks.Task;
 
 import java.io.IOException;
@@ -108,7 +110,7 @@ public class BaseHttpHandler implements HttpHandler {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         System.out.println("jsonObject = " + jsonObject.toString());
         System.out.println("Optional<Integer> taskId = Optional.of(jsonObject.get(\"id\").getAsInt());");
-        Optional<Integer> taskId;
+        Optional<Integer> taskId = Optional.empty();
         boolean idPresent;
         if (jsonObject.has("id")) {
             try {
@@ -133,9 +135,16 @@ public class BaseHttpHandler implements HttpHandler {
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();
         System.out.println("Task task = gson.fromJson(body, Task.class);");
-        Task task = gson1.fromJson(body, Task.class);
+        Task task = null;
+        if (jsonObject.has("epicID")) {
+            task = gson1.fromJson(body, Subtask.class);
+        } else if (jsonObject.has("epicSubtasks")) {
+            task = gson1.fromJson(body, Epic.class);
+        } else {
+            task = gson1.fromJson(body, Task.class);
+        }
         System.out.println("task = " + task);
-        if (idPresent) {
+        if (idPresent && taskId.get() != 0) {
             System.out.println("update");
             if (!manager.update(task)) {
                 response = "задача пересекается с существующими";
