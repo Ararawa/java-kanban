@@ -147,8 +147,8 @@ class HttpTaskServerTest {
             List<Subtask> tasksFromServer = gson1.fromJson(body, new ListTypeTokenSubTask().getType());
             List<Subtask> tasksFromManager = manager.getSubtasks();
             assertNotNull(tasksFromManager, "Задачи не возвращаются");
-            assertEquals(3, tasksFromServer.size(), "Некорректное количество задач");
-            assertEquals("name4", tasksFromServer.getFirst().name, "Некорректное имя задачи");
+            assertEquals(tasksFromManager.size(), tasksFromServer.size(), "Некорректное количество задач");
+            assertEquals(tasksFromManager.getFirst().name, tasksFromServer.getFirst().name, "Некорректное имя задачи");
         } catch (Exception e) {
             System.out.println("Exception = " + e.getMessage());
         }
@@ -176,8 +176,8 @@ class HttpTaskServerTest {
             List<Epic> tasksFromServer = gson1.fromJson(body, new ListTypeTokenEpic().getType());
             List<Epic> tasksFromManager = manager.getEpics();
             assertNotNull(tasksFromManager, "Задачи не возвращаются");
-            assertEquals(2, tasksFromServer.size(), "Некорректное количество задач");
-            assertEquals("name3", tasksFromServer.getFirst().name, "Некорректное имя задачи");
+            assertEquals(tasksFromManager.size(), tasksFromServer.size(), "Некорректное количество задач");
+            assertEquals(tasksFromManager.getFirst().name, tasksFromServer.getFirst().name, "Некорректное имя задачи");
         } catch (Exception e) {
             System.out.println("Exception = " + e.getMessage());
         }
@@ -240,7 +240,7 @@ class HttpTaskServerTest {
         try {
             int id = manager.getSubtasks().getFirst().id;
             HttpClient client = HttpClient.newHttpClient();
-            URI url = URI.create("http://localhost:8080/tasks/" + id);
+            URI url = URI.create("http://localhost:8080/subtasks/" + id);
             HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             assertEquals(200, response.statusCode());
@@ -292,7 +292,7 @@ class HttpTaskServerTest {
         try {
             int id = manager.getEpics().getFirst().id;
             HttpClient client = HttpClient.newHttpClient();
-            URI url = URI.create("http://localhost:8080/tasks/" + id);
+            URI url = URI.create("http://localhost:8080/epics/" + id);
             HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             assertEquals(200, response.statusCode());
@@ -502,5 +502,75 @@ class HttpTaskServerTest {
         }
     }
 
+    @Test
+    void getTaskByID404() {
+        try {
+            int id = manager.getTasks().getFirst().id + 1000;
+            HttpClient client = HttpClient.newHttpClient();
+            URI url = URI.create("http://localhost:8080/tasks/" + id);
+            HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            assertEquals(404, response.statusCode());
+            String contentType = response.headers().firstValue("Content-Type").orElse(null);
+            assertNull(contentType);
+            String body = response.body();
+            assertEquals("No task with this id = " + id, body);
+        } catch (Exception e) {
+            System.out.println("Exception = " + e.getMessage());
+        }
+    }
 
+    @Test
+    void getSubtaskByID404() {
+        try {
+            int id = manager.getSubtasks().getFirst().id + 1000;
+            HttpClient client = HttpClient.newHttpClient();
+            URI url = URI.create("http://localhost:8080/subtasks/" + id);
+            HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            assertEquals(404, response.statusCode());
+            String contentType = response.headers().firstValue("Content-Type").orElse(null);
+            assertNull(contentType);
+            String body = response.body();
+            assertEquals("No task with this id = " + id, body);
+        } catch (Exception e) {
+            System.out.println("Exception = " + e.getMessage());
+        }
+    }
+
+    @Test
+    void getEpicByID404() {
+        try {
+            int id = manager.getEpics().getFirst().id + 1000;
+            HttpClient client = HttpClient.newHttpClient();
+            URI url = URI.create("http://localhost:8080/epics/" + id);
+            HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            assertEquals(404, response.statusCode());
+            String contentType = response.headers().firstValue("Content-Type").orElse(null);
+            assertNull(contentType);
+            String body = response.body();
+            assertEquals("No task with this id = " + id, body);
+        } catch (Exception e) {
+            System.out.println("Exception = " + e.getMessage());
+        }
+    }
+
+    @Test
+    void getEpicSubtasks404() {
+        try {
+            int id = manager.getEpics().getLast().id + 1000;
+            HttpClient client = HttpClient.newHttpClient();
+            URI url = URI.create("http://localhost:8080/epics/" + id + "/subtasks");
+            HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            assertEquals(404, response.statusCode());
+            String contentType = response.headers().firstValue("Content-Type").orElse(null);
+            assertNull(contentType);
+            String body = response.body();
+            assertEquals("No epic with this id = " + id, body);
+        } catch (Exception e) {
+            System.out.println("Exception = " + e.getMessage());
+        }
+    }
 }

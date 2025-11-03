@@ -43,8 +43,8 @@ public class EpicHandler extends BaseHttpHandler {
                     if (pathArray.length == 4) {
                         System.out.println("getByID");
                         List<Subtask> epicSubtasks = manager.getSubtasksByEpicID(id.get());
-                        if (epicSubtasks == null) {
-                            response = "No epic with this id = " + id;
+                        if (epicSubtasks.isEmpty()) {
+                            response = "No epic with this id = " + id.get();
                             System.out.println(response);
                             httpExchange.sendResponseHeaders(404, 0);
                         } else {
