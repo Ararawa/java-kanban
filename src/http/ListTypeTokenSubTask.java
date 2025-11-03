@@ -1,11 +1,10 @@
 package http;
 
 import com.google.gson.reflect.TypeToken;
-import tasks.ListTask;
 import tasks.Subtask;
 
 import java.util.List;
 
-public class ListTypeToken extends TypeToken<List<ListTask>> {
+public class ListTypeTokenSubTask extends TypeToken<List<Subtask>> {
 
 }
