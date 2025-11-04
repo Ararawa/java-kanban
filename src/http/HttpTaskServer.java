@@ -29,19 +29,19 @@ public class HttpTaskServer {
 
     public static void main(String[] args) throws Exception {
         httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
-
+        TaskManager manager = Managers.getDefault();
         httpServer.start();
 
-//        preset();
-//
-//        httpServer.createContext("/tasks", new TaskHandler(manager));
-//        httpServer.createContext("/subtasks", new SubtaskHandler(manager));
-//        httpServer.createContext("/epics", new EpicHandler(manager));
-//        httpServer.createContext("/history", new HistoryHandler(manager));
-//        httpServer.createContext("/prioritized", new PriorityHandler(manager));
+        preset(manager);
+
+        httpServer.createContext("/tasks", new TaskHandler(manager));
+        httpServer.createContext("/subtasks", new SubtaskHandler(manager));
+        httpServer.createContext("/epics", new EpicHandler(manager));
+        httpServer.createContext("/history", new HistoryHandler(manager));
+        httpServer.createContext("/prioritized", new PriorityHandler(manager));
     }
 
-    void preset() {
+    static void preset(TaskManager manager) {
         LocalDateTime startTime = LocalDateTime
                 .parse("2022/02/24/06/07/00", DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/mm/ss"));
         Duration duration = Duration.ofMinutes(5);
