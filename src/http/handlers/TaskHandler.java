@@ -52,6 +52,7 @@ public class TaskHandler extends BaseHttpHandler {
                     } else {
                         response = "Cannot DELETE without id";
                         System.out.println(response);
+                        httpExchange.sendResponseHeaders(404, 0);
                     }
                     break;
                 default:
