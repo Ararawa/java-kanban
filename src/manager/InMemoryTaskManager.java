@@ -26,6 +26,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     TaskStatus calculateStatus(Epic epic) {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         TaskStatus was = epic.status;
         if (epic.getEpicSubtasks().isEmpty()) {
             return was;
@@ -52,6 +55,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     LocalDateTime calculateEpicStart(Epic epic) {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         if (!epic.getEpicSubtasks().isEmpty()) {
             return epic.getEpicSubtasks()
                     .stream()
@@ -63,7 +69,10 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    LocalDateTime calculateEpicEnd(Epic epic) {
+    LocalDateTime calculateEpicEnd(Epic epic) throws NotFoundException {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         if (!epic.getEpicSubtasks().isEmpty()) {
             return epic.getEpicSubtasks()
                     .stream()
@@ -76,6 +85,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     Duration calculateEpicDuration(Epic epic) {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         if (!epic.getEpicSubtasks().isEmpty()) {
             Duration duration = Duration.ofMinutes(0);
             for (Subtask subtask : getSubtasksByEpicID(epic.id)) {
@@ -123,7 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.add(subtasks.get(id));
             return subtasks.get(id);
         }
-        return null;
+        throw new NotFoundException("Task not found");
     }
 
     @Override
@@ -263,6 +275,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public boolean scheduleConflict(Task task) {
+        if (task == null) {
+            throw new NotFoundException("Task not found");
+        }
         boolean conflict;
         if (task instanceof Subtask) {
             conflict = prioritizedTasks

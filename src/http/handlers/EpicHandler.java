@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import http.adaptors.DurationAdapter;
 import http.adaptors.LocalDateTimeAdapter;
+import manager.NotFoundException;
 import manager.TaskManager;
 import tasks.Subtask;
 
@@ -73,6 +74,8 @@ public class EpicHandler extends BaseHttpHandler {
                     response = "Вы использовали какой-то другой метод!";
                     sendNotFound(httpExchange, response);
             }
+        } catch (NotFoundException e) {
+            sendNotFound(httpExchange, e.getMessage());
         } catch (IOException e) {
             response = "Internal Server Error IOException";
             sendInternalServerError(httpExchange, response);

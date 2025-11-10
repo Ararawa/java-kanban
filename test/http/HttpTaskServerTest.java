@@ -519,7 +519,7 @@ class HttpTaskServerTest {
             String contentType = response.headers().firstValue("Content-Type").orElse(null);
             assertNull(contentType);
             String body = response.body();
-            assertEquals("No task with this id = " + id, body);
+            assertEquals("Task not found", body);
         } catch (Exception e) {
             System.out.println("Exception = " + e.getMessage());
         }
@@ -537,7 +537,7 @@ class HttpTaskServerTest {
             String contentType = response.headers().firstValue("Content-Type").orElse(null);
             assertNull(contentType);
             String body = response.body();
-            assertEquals("No task with this id = " + id, body);
+            assertEquals("Task not found", body);
         } catch (Exception e) {
             System.out.println("Exception = " + e.getMessage());
         }
@@ -555,7 +555,7 @@ class HttpTaskServerTest {
             String contentType = response.headers().firstValue("Content-Type").orElse(null);
             assertNull(contentType);
             String body = response.body();
-            assertEquals("No task with this id = " + id, body);
+            assertEquals("Task not found", body);
         } catch (Exception e) {
             System.out.println("Exception = " + e.getMessage());
         }

@@ -1,6 +1,7 @@
 package http.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
+import manager.NotFoundException;
 import manager.TaskManager;
 
 import java.io.IOException;
@@ -53,6 +54,8 @@ public class TaskHandler extends BaseHttpHandler {
                     response = "Вы использовали какой-то другой метод!";
                     sendNotFound(httpExchange, response);
             }
+        } catch (NotFoundException e) {
+            sendNotFound(httpExchange, e.getMessage());
         } catch (IOException e) {
             response = "Internal Server Error IOException";
             sendInternalServerError(httpExchange, response);

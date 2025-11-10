@@ -140,11 +140,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void deleteByID() {
-        Task test1 = manager.getByID(1);
+        List<Task> test1 = manager.getTasks();
         manager.deleteByID(1);
-        Task test2 = manager.getByID(1);
+        List<Task> test2 = manager.getTasks();
         assertNotEquals(test1, test2);
-        assertNull(test2);
+        assertEquals(test1.size() - 1, test2.size());
     }
 
     @Test
