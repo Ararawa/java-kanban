@@ -8,8 +8,6 @@ import manager.TaskManager;
 import tasks.Subtask;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +24,6 @@ public class EpicHandler extends BaseHttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         try {
             String method = httpExchange.getRequestMethod();
-            System.out.println("Началась обработка " + method + " запроса от клиента.");
 
             String path = httpExchange.getRequestURI().getPath();
             String[] pathArray = path.split("/");
@@ -39,16 +36,14 @@ public class EpicHandler extends BaseHttpHandler {
 
             switch (method) {
                 case "POST":
-                    response = postMethod(httpExchange);
+                    postMethod(httpExchange);
                     break;
                 case "GET":
                     if (pathArray.length == 4) {
-                        System.out.println("getByID");
                         List<Subtask> epicSubtasks = manager.getSubtasksByEpicID(id.get());
                         if (epicSubtasks.isEmpty()) {
                             response = "No epic with this id = " + id.get();
-                            System.out.println(response);
-                            httpExchange.sendResponseHeaders(404, 0);
+                            sendNotFound(httpExchange, response);
                         } else {
                             GsonBuilder gb1 = new GsonBuilder();
                             Gson gson1 = gb1
@@ -56,37 +51,31 @@ public class EpicHandler extends BaseHttpHandler {
                                     .registerTypeAdapter(Duration.class, new DurationAdapter())
                                     .create();
                             response = gson1.toJson(epicSubtasks);
-                            httpExchange.getResponseHeaders().set("Content-Type", "application/json");
-                            httpExchange.sendResponseHeaders(200, 0);
+                            sendText(httpExchange, response);
                         }
                     } else if (id.isPresent()) {
-                        response = getByID(id.get(), httpExchange);
+                        getByID(id.get(), httpExchange);
                     } else {
-                        response = getAll(httpExchange, pathArray[1]);
+                        getAll(httpExchange, pathArray[1]);
                     }
                     break;
                 case "DELETE":
                     response = "Вы использовали метод DELETE!";
                     if (id.isPresent()) {
-                        System.out.println("deleteByID");
                         manager.deleteByID(id.get());
-                        httpExchange.sendResponseHeaders(200, 0);
+                        sendText(httpExchange, response);
                     } else {
                         response = "Cannot DELETE without id";
-                        System.out.println(response);
-                        httpExchange.sendResponseHeaders(404, 0);
+                        sendNotFound(httpExchange, response);
                     }
                     break;
                 default:
                     response = "Вы использовали какой-то другой метод!";
+                    sendNotFound(httpExchange, response);
             }
         } catch (IOException e) {
-            httpExchange.sendResponseHeaders(500, 0);
             response = "Internal Server Error IOException";
-        }
-        try (OutputStream os = httpExchange.getResponseBody()) {
-            os.write(response.getBytes(StandardCharsets.UTF_8));
+            sendInternalServerError(httpExchange, response);
         }
     }
-
 }
