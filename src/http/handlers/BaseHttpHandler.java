@@ -147,7 +147,7 @@ public class BaseHttpHandler implements HttpHandler {
 
     void sendText201(HttpExchange httpExchange, String text) throws IOException {
         byte[] resp = text.getBytes(StandardCharsets.UTF_8);
-        httpExchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+        //httpExchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
         httpExchange.sendResponseHeaders(201, resp.length);
         httpExchange.getResponseBody().write(resp);
         httpExchange.close();
