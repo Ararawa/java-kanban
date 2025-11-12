@@ -35,15 +35,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void create(Task task) {
-        super.create(task);
+    public boolean create(Task task) {
+        boolean b = super.create(task);
         save();
+        return b;
     }
 
     @Override
-    public void update(Task task) {
-        super.update(task);
+    public boolean update(Task task) {
+        boolean b = super.update(task);
         save();
+        return b;
     }
 
     @Override
@@ -153,5 +155,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         task.id = Integer.parseInt(split[0]);
         return task;
+    }
+
+    @Override
+    public ArrayList<Task> getTasks() {
+        return super.getTasks();
+    }
+
+    @Override
+    public ArrayList<Subtask> getSubtasks() {
+        return super.getSubtasks();
+    }
+
+    @Override
+    public ArrayList<Epic> getEpics() {
+        return super.getEpics();
     }
 }

@@ -26,6 +26,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     TaskStatus calculateStatus(Epic epic) {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         TaskStatus was = epic.status;
         if (epic.getEpicSubtasks().isEmpty()) {
             return was;
@@ -52,6 +55,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     LocalDateTime calculateEpicStart(Epic epic) {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         if (!epic.getEpicSubtasks().isEmpty()) {
             return epic.getEpicSubtasks()
                     .stream()
@@ -63,7 +69,10 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    LocalDateTime calculateEpicEnd(Epic epic) {
+    LocalDateTime calculateEpicEnd(Epic epic) throws NotFoundException {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         if (!epic.getEpicSubtasks().isEmpty()) {
             return epic.getEpicSubtasks()
                     .stream()
@@ -76,6 +85,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     Duration calculateEpicDuration(Epic epic) {
+        if (epic == null) {
+            throw new NotFoundException("Task not found");
+        }
         if (!epic.getEpicSubtasks().isEmpty()) {
             Duration duration = Duration.ofMinutes(0);
             for (Subtask subtask : getSubtasksByEpicID(epic.id)) {
@@ -123,11 +135,11 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.add(subtasks.get(id));
             return subtasks.get(id);
         }
-        return null;
+        throw new NotFoundException("Task not found");
     }
 
     @Override
-    public void create(Task task) {
+    public boolean create(Task task) {
         if (task instanceof Epic) {
             Epic epic = new Epic(task.name, task.description, task.status);
             epic.setId(generateNumber());
@@ -140,7 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             if (scheduleConflict(task)) {
                 System.out.println("Schedule conflict in create!");
-                return;
+                return false;
             }
             if (task instanceof Subtask) {
                 Subtask subtask = new Subtask(task.name, task.description, task.status, ((Subtask) task).epicID,
@@ -162,17 +174,18 @@ public class InMemoryTaskManager implements TaskManager {
                 setPriority(tasks.get(task1.id));
             }
         }
+        return true;
     }
 
     @Override
-    public void update(Task task) {
+    public boolean update(Task task) {
         if (scheduleConflict(task)) {
             Task inter = getByID(task.id);
             boolean ok = inter.id == task.id && inter.startTime.equals(task.startTime) &&
                     inter.duration.equals(task.duration);
             if (!ok) {
                 System.out.println("Schedule conflict in update!");
-                return;
+                return false;
             }
         }
         if (task != null) {
@@ -204,11 +217,13 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.get(task.id).duration = task.duration;
             setPriority(tasks.get(task.id));
         }
+        return true;
     }
 
     @Override
     public void deleteByID(int id) {
         if (tasks.containsKey(id)) {
+            prioritizedTasks.remove(tasks.get(id));
             tasks.remove(id);
         } else if (subtasks.containsKey(id)) {
             int epicID = subtasks.get(id).epicID;
@@ -219,6 +234,7 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(epicID).startTime = calculateEpicStart(epics.get(epicID));
             epics.get(epicID).endTime = calculateEpicEnd(epics.get(epicID));
             epics.get(epicID).duration = calculateEpicDuration(epics.get(epicID));
+            prioritizedTasks.remove(subtasks.get(id));
             subtasks.remove(id);
         } else {
             for (int i = 0; i < epics.get(id).getEpicSubtasks().size(); i++) {
@@ -259,6 +275,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public boolean scheduleConflict(Task task) {
+        if (task == null) {
+            throw new NotFoundException("Task not found");
+        }
         boolean conflict;
         if (task instanceof Subtask) {
             conflict = prioritizedTasks
@@ -279,5 +298,25 @@ public class InMemoryTaskManager implements TaskManager {
                     });
         }
         return conflict;
+    }
+
+    @Override
+    public ArrayList<Task> getTasks() {
+        return new ArrayList<>(tasks.values());
+    }
+
+    @Override
+    public ArrayList<Subtask> getSubtasks() {
+        return new ArrayList<>(subtasks.values());
+    }
+
+    @Override
+    public ArrayList<Epic> getEpics() {
+        return new ArrayList<>(epics.values());
+    }
+
+    @Override
+    public void clearHistory() {
+        historyManager.clearHistory();
     }
 }

@@ -23,6 +23,7 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     void setUp() {
         manager = Managers.getDefault();
+        manager.deleteAllTasks();
         startTime = startTime.plus(duration).plus(duration);
         Task task1 = new Task("name1", "description1", TaskStatus.NEW, startTime, duration);
         manager.create(task1);
